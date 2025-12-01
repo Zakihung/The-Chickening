@@ -61,6 +61,11 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Thêm biến background_color để test input.
   - Event KEYDOWN cho SPACE: Thay đổi màu nền (đen <-> đỏ) để thấy input hoạt động.
   - FPS counter: Sử dụng clock.get_fps() và blit text ở (10, 10).
+- Ngày 8: Tạo module screens/ trong modules/, và viết file game_screen.py với hàm draw background đơn giản:
+  - Class GameScreen nhận screen từ Pygame.
+  - draw_background: Fill màu xanh (thêm COLOR_GREEN = (0, 255, 0) vào constants.py nếu chưa).
+  - Thêm rect đơn giản để test vẽ.
+
 
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
