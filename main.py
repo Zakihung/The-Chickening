@@ -3,7 +3,9 @@ from modules.utils.constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR_BLACK, COLOR_WHITE, COLOR_RED
 )
 from modules.screens.game_screen import GameScreen
-from modules.utils.helpers import rect_collision  # Không bắt buộc, nhưng ok
+from modules.utils.helpers import rect_collision
+import json
+from modules.utils.constants import ASSETS_PATH
 
 
 def main():

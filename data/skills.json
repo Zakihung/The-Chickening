@@ -1,0 +1,106 @@
+{
+  "branches": {
+    "melee": {
+      "name": "Chiến binh Mỏ Sắt",
+      "description": "Sát thương cận chiến, tăng máu",
+      "skills": [
+        {
+          "id": 101,
+          "name": "Mỏ Sắt Cấp 1",
+          "level": 1,
+          "effects": {
+            "melee_damage_bonus": 10,
+            "hp_bonus": 20
+          }
+        },
+        {
+          "id": 102,
+          "name": "Mỏ Sắt Cấp 2",
+          "level": 2,
+          "effects": {
+            "melee_damage_bonus": 20,
+            "hp_bonus": 40
+          }
+        },
+        {
+          "id": 103,
+          "name": "Mỏ Sắt Cấp 3",
+          "level": 3,
+          "effects": {
+            "melee_damage_bonus": 30,
+            "hp_bonus": 60,
+            "passive": "Tăng giáp 10%"
+          }
+        }
+      ]
+    },
+    "ranged": {
+      "name": "Xạ thủ Xạ Lông",
+      "description": "Bắn xa, crit rate cao",
+      "skills": [
+        {
+          "id": 201,
+          "name": "Xạ Lông Cấp 1",
+          "level": 1,
+          "effects": {
+            "ranged_damage_bonus": 15,
+            "crit_rate": 0.1
+          }
+        },
+        {
+          "id": 202,
+          "name": "Xạ Lông Cấp 2",
+          "level": 2,
+          "effects": {
+            "ranged_damage_bonus": 25,
+            "crit_rate": 0.2
+          }
+        },
+        {
+          "id": 203,
+          "name": "Xạ Lông Cấp 3",
+          "level": 3,
+          "effects": {
+            "ranged_damage_bonus": 35,
+            "crit_rate": 0.3,
+            "passive": "Bắn xuyên 1 kẻ thù"
+          }
+        }
+      ]
+    },
+    "bomb": {
+      "name": "Bom thủ Trứng Gà",
+      "description": "Trứng nổ mạnh, sát thương lan",
+      "skills": [
+        {
+          "id": 301,
+          "name": "Trứng Nổ Cấp 1",
+          "level": 1,
+          "effects": {
+            "bomb_damage_bonus": 20,
+            "aoe_radius_bonus": 20
+          }
+        },
+        {
+          "id": 302,
+          "name": "Trứng Nổ Cấp 2",
+          "level": 2,
+          "effects": {
+            "bomb_damage_bonus": 40,
+            "aoe_radius_bonus": 40
+          }
+        },
+        {
+          "id": 303,
+          "name": "Trứng Nổ Cấp 3",
+          "level": 3,
+          "effects": {
+            "bomb_damage_bonus": 60,
+            "aoe_radius_bonus": 60,
+            "passive": "Trứng gây stun 2s"
+          }
+        }
+      ]
+    }
+  }
+}

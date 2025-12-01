@@ -2,6 +2,8 @@
 import pygame
 from modules.utils.constants import SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_GREEN
 from modules.utils.helpers import rect_collision
+import json
+from modules.utils.constants import ASSETS_PATH  # Nếu cần, nhưng chưa dùng
 
 class GameScreen:
     def __init__(self, screen):
@@ -14,6 +16,13 @@ class GameScreen:
 
     def draw_background(self):
         self.screen.fill(self.background_color)
+        with open('data/items.json', 'r', encoding='utf-8') as f:
+            items_data = json.load(f)
+            print(items_data['items'][0])  # In item đầu tiên để test
+
+        with open('data/skills.json', 'r', encoding='utf-8') as f:
+            skills_data = json.load(f)
+            print(skills_data['branches']['melee']['skills'][0])  # Test skill
         pygame.draw.rect(self.screen, (0, 100, 0), (0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100))
 
     def draw_test_sprite(self):

@@ -1,0 +1,83 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "Mỏ Thép",
+      "rarity": "Common",
+      "type": "weapon",
+      "effects": {
+        "melee_damage_bonus": 5,
+        "description": "Tăng sát thương gần"
+      },
+      "synergies": []
+    },
+    {
+      "id": 2,
+      "name": "Bộ Lông Thép",
+      "rarity": "Rare",
+      "type": "armor",
+      "effects": {
+        "armor_bonus": 10,
+        "speed_penalty": -1,
+        "description": "Tăng giáp, giảm tốc độ"
+      },
+      "synergies": []
+    },
+    {
+      "id": 3,
+      "name": "Thần Lông Bất Tử",
+      "rarity": "Epic",
+      "type": "accessory",
+      "effects": {
+        "dodge_chance": 1,
+        "cooldown": 15,
+        "description": "Né 1 đòn mỗi 15s"
+      },
+      "synergies": []
+    },
+    {
+      "id": 4,
+      "name": "Giày Phụt Lông",
+      "rarity": "Legendary",
+      "type": "boots",
+      "effects": {
+        "speed_bonus": 2,
+        "dodge_damage": 10,
+        "description": "Tăng tốc + tạo sát thương khi lăn né"
+      },
+      "synergies": [
+        {
+          "with_item_id": 5,
+          "effect": "Tăng cháy lâu hơn"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Lông Cháy",
+      "rarity": "Rare",
+      "type": "accessory",
+      "effects": {
+        "burn_damage": 5,
+        "description": "Đánh gây cháy"
+      },
+      "synergies": [
+        {
+          "with_item_id": 6,
+          "effect": "Cháy mạnh hơn với xăng"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Trứng Xăng",
+      "rarity": "Epic",
+      "type": "weapon",
+      "effects": {
+        "bomb_damage_bonus": 20,
+        "description": "Tăng sát thương trứng nổ"
+      },
+      "synergies": []
+    }
+  ]
+}
