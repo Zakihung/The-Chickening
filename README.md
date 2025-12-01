@@ -27,7 +27,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - ├── modules/                 `# Các module chính`
 - │   ├── entities/            `# Các thực thể trong game`
 - │   │   ├── base_entity.py   `# Class base cho entities (position, HP, update với di chuyển delta_time, draw với HP bar)`
-- │   │   ├── player.py        `# Class Player (kế thừa BaseEntity, movement input, eggnergy)`
+- │   │   ├── player.py        `# Class Player (movement input handling, flip sprite, dodge placeholder)`
 - │   │   ├── enemy.py         `# Class Enemy base (AI behaviors)`
 - │   │   ├── boss.py          `# Class Boss (phases, special attacks)`
 - │   │   ├── projectile.py    `# Đạn (lông, trứng nổ)`
@@ -89,6 +89,12 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Thêm eggnergy, damages từ gameplay.
   - Update: Thêm param keys cho input, set direction dựa WASD/arrows.
   - Draw: Thêm eggnergy bar (vàng) dưới HP bar.
+- Ngày 17: Thêm input handling chi tiết hơn cho player movement trong player.py. Chúng ta sẽ refine update() để xử lý input mượt mà (WASD/arrows cho di chuyển, normalize direction để tốc độ chéo không nhanh hơn), thêm check boundary tốt hơn (override clamp nếu cần), và tích hợp delta_time đầy đủ cho movement frame-independent.
+  - Refine input: Sử dụng -=/+1 cho direction để hỗ trợ multi-key (chéo).
+  - Thêm flip sprite theo hướng trái/phải (sử dụng original_image để tránh flip lặp).
+  - Placeholder dodge: Khi SPACE, tăng speed tạm, set cooldown/duration với delta_time (cho mượt).
+  - Thêm regen eggnergy theo thời gian (placeholder cho balance).
+  - Tích Hợp Delta_Time Thực Trong game_screen.py Và main.py
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
 ## Kế hoạch dự án (dự kiến)
