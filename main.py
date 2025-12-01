@@ -1,8 +1,9 @@
 import pygame
+from modules.utils.constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR_BLACK
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((800, 600))  # Kích thước màn hình mặc định
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("The Chickening")
     clock = pygame.time.Clock()
     running = True
@@ -12,9 +13,9 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        screen.fill((0, 0, 0))  # Nền đen tạm thời
+        screen.fill(COLOR_BLACK)
         pygame.display.flip()
-        clock.tick(60)  # 60 FPS
+        clock.tick(FPS)
 
     pygame.quit()
 
