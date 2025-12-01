@@ -42,6 +42,7 @@ def main():
 
         # Draw/render (vẽ màn hình)
         game_screen.draw_background()
+        game_screen.draw_test_sprite()
 
         # Vẽ text welcome
         text = font.render("Welcome to The Chickening! Press SPACE to toggle color, ESC to quit.", True, COLOR_WHITE)
