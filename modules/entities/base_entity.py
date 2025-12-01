@@ -1,6 +1,6 @@
 # modules/entities/base_entity.py
 import pygame
-from modules.utils.constants import PLAYER_HP_DEFAULT, ENEMY_HP_BASE
+from modules.utils.constants import PLAYER_HP_DEFAULT, ENEMY_HP_BASE, COLOR_RED, COLOR_GREEN, COLOR_BLACK, SCREEN_WIDTH, SCREEN_HEIGHT
 from modules.utils.helpers import rect_collision  # Để dùng sau cho collision
 
 class BaseEntity:
@@ -20,26 +20,47 @@ class BaseEntity:
         self.speed = speed
         self.alive = True  # Flag để check chết chưa
         self.image = None  # Placeholder cho sprite (load sau)
+        self.direction = pygame.Vector2(0, 0)  # Vector hướng di chuyển (normalize sau)
 
     def update(self, delta_time):
         """
         Update logic mỗi frame (di chuyển, check chết, etc.).
-        Override trong subclass.
-        :param delta_time: Thời gian giữa frames (cho movement mượt)
+        Override trong subclass cho AI hoặc input.
+        :param delta_time: Thời gian giữa frames (cho movement mượt, ví dụ: 1/FPS)
         """
         if self.hp <= 0:
             self.alive = False
+            return  # Không update nếu chết
+
+        # Di chuyển cơ bản dựa trên direction và speed
+        if self.direction.length() > 0:
+            self.direction.normalize_ip()  # Normalize để tốc độ ổn định
+            self.rect.x += self.direction.x * self.speed * delta_time * 60  # Scale với FPS 60
+            self.rect.y += self.direction.y * self.speed * delta_time * 60
+
+        # Giới hạn trong màn hình (placeholder, có thể override)
+        self.rect.clamp_ip(pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
 
     def draw(self, screen):
         """
         Vẽ entity lên screen.
-        Override để vẽ sprite thực.
+        Override để customize sprite.
         """
         if self.image:
             screen.blit(self.image, self.rect.topleft)
         else:
             # Placeholder: Vẽ rect đỏ cho test
-            pygame.draw.rect(screen, (255, 0, 0), self.rect, 2)
+            pygame.draw.rect(screen, COLOR_RED, self.rect, 2)
+
+        # Vẽ HP bar nếu alive
+        if self.alive and self.max_hp > 0:
+            hp_ratio = self.hp / self.max_hp
+            bar_width = self.rect.width * hp_ratio
+            hp_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 10, bar_width, 5)  # Thanh máu trên đầu
+            pygame.draw.rect(screen, COLOR_GREEN, hp_bar_rect)  # Xanh cho HP còn
+            # Viền bar
+            full_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 10, self.rect.width, 5)
+            pygame.draw.rect(screen, COLOR_BLACK, full_bar_rect, 1)
 
     def take_damage(self, damage):
         """

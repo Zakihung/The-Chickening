@@ -13,7 +13,8 @@ class GameScreen:
         # Load sprite test
         self.chicken_sprite = pygame.image.load('assets/images/player/chicken.png')  # Đường dẫn tương đối từ root
         self.chicken_rect = self.chicken_sprite.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))  # Vị trí giữa màn
-        self.test_entity = BaseEntity(100, 100, 50, 50, hp=100, speed=5)  # Test entity ở góc
+        self.test_entity = BaseEntity(100, 100, 50, 50, hp=100, speed=5)
+        self.test_entity.direction = pygame.Vector2(1, 0)  # Test di chuyển phải (override trong update sau)
         self.chicken_sprite = pygame.transform.scale(self.chicken_sprite, (300, 300)) # scale gà nhỏ lại
 
     def draw_background(self):
@@ -28,9 +29,11 @@ class GameScreen:
         with open('data/levels.json', 'r', encoding='utf-8') as f:
             levels_data = json.load(f)
             print(levels_data['levels'][0])  # In level đầu tiên để test
-        # Test update và draw entity
-        self.test_entity.update(1 / 60)  # Giả delta_time = 1/FPS
+        # Test update và draw entity với delta_time
+        delta_time = 1 / 60  # Giả định FPS 60, sau dùng clock.get_time() / 1000
+        self.test_entity.update(delta_time)
         self.test_entity.draw(self.screen)
+        self.test_entity.take_damage(1)  # Test giảm HP dần để thấy HP bar thay đổi
         pygame.draw.rect(self.screen, (0, 100, 0), (0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100))
 
     def draw_test_sprite(self):
