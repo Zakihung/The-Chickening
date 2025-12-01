@@ -68,7 +68,10 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Thêm rect đơn giản để test vẽ.
 - Ngày 9: Tích Hợp asset loading bằng cách tạo đầy đủ thư mục assets/images/, tải/load một sprite test (hình gà con pixel art), và hiển thị nó trên màn hình để test.
 - Ngày 10: Test run dự án cơ bản bằng cách chạy main.py để đảm bảo window hiển thị đúng với background, text, FPS, event handling, và sprite.
-
+- Ngày 11: Viết file helpers.py trong modules/utils/ chứa các hàm tiện ích chung, tập trung vào collision detection (kiểm tra va chạm giữa Rects và circles – dùng cho attacks, enemies sau). Các hàm khác như distance, clamp (giới hạn vị trí), lerp (smooth interpolation) để hỗ trợ movement.
+  - rect_collision: Dùng Rect.colliderect() của Pygame (nhanh).
+  - circle_collision: Cho explosion AoE hoặc hitbox tròn.
+  - Các hàm khác: Cơ bản cho AI, movement.
 
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
@@ -284,7 +287,7 @@ Cáo trúng đòn kêu “Auu!”
 Sống sót và qua từng màn
 Đánh bại Đại Trùm Cáo Chúa ở màn cuối
 Mở Game+ với quái khó hơn và skin mới"
-Đầu tiên bạn hãy lên kế hoạch dự án theo ngày (tôi có quỹ thời gian là 200 ngày để hoàn thành), mỗi ngày đặt một mục tiêu cụ thể. Hãy tổ chức thư mục các module và các file của toàn bộ dự án
 
-Sau đó, chúng ta đã thực hiện đến Ngày 10 theo hướng dẫn từng bước. Dự án đang ở giai đoạn setup cơ bản: có main.py với game loop, constants.py, game_screen.py với draw background và load sprite test (chicken.png), FPS counter, event handling cơ bản. Repo GitHub: https://github.com/Zakihung/The-Chickening.git
+
+Chúng ta đã thực hiện đến Ngày 10 theo hướng dẫn từng bước. Dự án đang ở giai đoạn setup cơ bản: có main.py với game loop, constants.py, game_screen.py với draw background và load sprite test (chicken.png), FPS counter, event handling cơ bản. Repo GitHub: https://github.com/Zakihung/The-Chickening.git
 Bây giờ, hãy tiếp tục từ Ngày 11: Viết helpers.py trong utils/ cho các hàm tiện ích (collision detection). Hãy cung cấp hướng dẫn chi tiết từng bước cho ngày này, tương tự các ngày trước.
