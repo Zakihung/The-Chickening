@@ -67,6 +67,8 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - draw_background: Fill màu xanh (thêm COLOR_GREEN = (0, 255, 0) vào constants.py nếu chưa).
   - Thêm rect đơn giản để test vẽ.
 - Ngày 9: Tích Hợp asset loading bằng cách tạo đầy đủ thư mục assets/images/, tải/load một sprite test (hình gà con pixel art), và hiển thị nó trên màn hình để test.
+- Ngày 10: Test run dự án cơ bản bằng cách chạy main.py để đảm bảo window hiển thị đúng với background, text, FPS, event handling, và sprite.
+
 
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
