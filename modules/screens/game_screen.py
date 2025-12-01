@@ -23,6 +23,9 @@ class GameScreen:
         with open('data/skills.json', 'r', encoding='utf-8') as f:
             skills_data = json.load(f)
             print(skills_data['branches']['melee']['skills'][0])  # Test skill
+        with open('data/levels.json', 'r', encoding='utf-8') as f:
+            levels_data = json.load(f)
+            print(levels_data['levels'][0])  # In level đầu tiên để test
         pygame.draw.rect(self.screen, (0, 100, 0), (0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100))
 
     def draw_test_sprite(self):

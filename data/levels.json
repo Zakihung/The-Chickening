@@ -1,0 +1,109 @@
+{
+  "levels": [
+    {
+      "id": 1,
+      "map_type": "farm",
+      "background": "farm_bg.png",
+      "wave_count": 5,
+      "spawn_points": [
+        {"x": 100, "y": 100, "hp": 50},
+        {"x": 700, "y": 100, "hp": 50},
+        {"x": 400, "y": 500, "hp": 50}
+      ],
+      "waves": [
+        {"enemies": [{"type": "runner", "count": 3}, {"type": "archer", "count": 1}]},
+        {"enemies": [{"type": "runner", "count": 4}, {"type": "bomber", "count": 1}]},
+        {"enemies": [{"type": "archer", "count": 2}, {"type": "shield", "count": 1}]},
+        {"enemies": [{"type": "runner", "count": 5}, {"type": "archer", "count": 2}]},
+        {"enemies": [{"type": "bomber", "count": 2}, {"type": "shield", "count": 1}]}
+      ],
+      "boss": null
+    },
+    {
+      "id": 2,
+      "map_type": "forest",
+      "background": "forest_bg.png",
+      "wave_count": 6,
+      "spawn_points": [
+        {"x": 50, "y": 50, "hp": 60},
+        {"x": 750, "y": 50, "hp": 60},
+        {"x": 400, "y": 550, "hp": 60},
+        {"x": 200, "y": 300, "hp": 60}
+      ],
+      "waves": [
+        {"enemies": [{"type": "runner", "count": 4}, {"type": "archer", "count": 2}]},
+        {"enemies": [{"type": "bomber", "count": 2}, {"type": "shield", "count": 1}]},
+        {"enemies": [{"type": "runner", "count": 5}, {"type": "mage", "count": 1}]},
+        {"enemies": [{"type": "archer", "count": 3}, {"type": "bomber", "count": 2}]},
+        {"enemies": [{"type": "shield", "count": 2}, {"type": "mage", "count": 1}]},
+        {"enemies": [{"type": "runner", "count": 6}, {"type": "archer", "count": 3}]}
+      ],
+      "boss": null
+    },
+    {
+      "id": 5,
+      "map_type": "village",
+      "background": "village_bg.png",
+      "wave_count": 8,
+      "spawn_points": [
+        {"x": 100, "y": 100, "hp": 80},
+        {"x": 700, "y": 100, "hp": 80},
+        {"x": 100, "y": 500, "hp": 80},
+        {"x": 700, "y": 500, "hp": 80}
+      ],
+      "waves": [
+        {"enemies": [{"type": "runner", "count": 5}, {"type": "archer", "count": 3}, {"type": "bomber", "count": 2}]},
+        {"enemies": [{"type": "shield", "count": 2}, {"type": "mage", "count": 2}]},
+        {"enemies": [{"type": "runner", "count": 6}, {"type": "archer", "count": 4}]},
+        {"enemies": [{"type": "bomber", "count": 3}, {"type": "shield", "count": 3}]},
+        {"enemies": [{"type": "mage", "count": 2}, {"type": "runner", "count": 7}]},
+        {"enemies": [{"type": "archer", "count": 5}, {"type": "bomber", "count": 3}]},
+        {"enemies": [{"type": "shield", "count": 4}, {"type": "mage", "count": 3}]},
+        {"enemies": [{"type": "runner", "count": 8}, {"type": "archer", "count": 5}]}
+      ],
+      "boss": {
+        "type": "boss1",
+        "name": "Cáo Đại Tướng",
+        "phases": [
+          {"hp_threshold": 100, "attacks": ["spear_charge"]},
+          {"hp_threshold": 50, "attacks": ["spear_charge", "summon_minions"], "minions_count": 5},
+          {"hp_threshold": 20, "attacks": ["spear_charge", "summon_minions", "speed_boost"]}
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "map_type": "volcano",
+      "background": "volcano_bg.png",
+      "wave_count": 10,
+      "spawn_points": [
+        {"x": 50, "y": 50, "hp": 100},
+        {"x": 750, "y": 50, "hp": 100},
+        {"x": 50, "y": 550, "hp": 100},
+        {"x": 750, "y": 550, "hp": 100},
+        {"x": 400, "y": 300, "hp": 100}
+      ],
+      "waves": [
+        {"enemies": [{"type": "runner", "count": 10}, {"type": "archer", "count": 5}, {"type": "bomber", "count": 3}]},
+        {"enemies": [{"type": "shield", "count": 4}, {"type": "mage", "count": 3}]},
+        {"enemies": [{"type": "runner", "count": 12}, {"type": "archer", "count": 6}]},
+        {"enemies": [{"type": "bomber", "count": 5}, {"type": "shield", "count": 5}]},
+        {"enemies": [{"type": "mage", "count": 4}, {"type": "runner", "count": 15}]},
+        {"enemies": [{"type": "archer", "count": 7}, {"type": "bomber", "count": 6}]},
+        {"enemies": [{"type": "shield", "count": 6}, {"type": "mage", "count": 5}]},
+        {"enemies": [{"type": "runner", "count": 18}, {"type": "archer", "count": 8}]},
+        {"enemies": [{"type": "bomber", "count": 7}, {"type": "shield", "count": 7}]},
+        {"enemies": [{"type": "mage", "count": 6}, {"type": "runner", "count": 20}]}
+      ],
+      "boss": {
+        "type": "final_boss",
+        "name": "Đại Trùm Cáo Chúa",
+        "phases": [
+          {"hp_threshold": 200, "attacks": ["fire_ball", "summon_army"]},
+          {"hp_threshold": 100, "attacks": ["fire_ball", "summon_army", "lava_wave"]},
+          {"hp_threshold": 50, "attacks": ["fire_ball", "summon_army", "lava_wave", "ultimate_rage"]}
+        ]
+      }
+    }
+  ]
+}
