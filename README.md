@@ -72,7 +72,8 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - rect_collision: Dùng Rect.colliderect() của Pygame (nhanh).
   - circle_collision: Cho explosion AoE hoặc hitbox tròn.
   - Các hàm khác: Cơ bản cho AI, movement.
-
+- Ngày 12: Thiết kế database đơn giản sử dụng file JSON cho items và skills trong thư mục data/. Điều này sẽ lưu trữ dữ liệu tĩnh cho items (trang bị với hiệu ứng, độ hiếm, synergies) và skills (skill tree với branches, random upgrades theo roguelite). Sử dụng JSON vì dễ đọc, không cần database phức tạp, và dễ load vào Python sau (sử dụng json module).
+  -
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
 ## Kế hoạch dự án
