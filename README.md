@@ -73,7 +73,8 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - circle_collision: Cho explosion AoE hoặc hitbox tròn.
   - Các hàm khác: Cơ bản cho AI, movement.
 - Ngày 12: Thiết kế database đơn giản sử dụng file JSON cho items và skills trong thư mục data/. Điều này sẽ lưu trữ dữ liệu tĩnh cho items (trang bị với hiệu ứng, độ hiếm, synergies) và skills (skill tree với branches, random upgrades theo roguelite). Sử dụng JSON vì dễ đọc, không cần database phức tạp, và dễ load vào Python sau (sử dụng json module).
-  -
+- Ngày 13: Thiết kế file levels.json trong thư mục data/ để định nghĩa cấu trúc màn chơi (levels). File này sẽ lưu trữ dữ liệu tĩnh cho các màn, bao gồm số wave mỗi level, loại kẻ thù spawn theo wave, điểm spawn (có thể phá hủy), boss ở mỗi 5 level, và môi trường (background/map như trang trại, rừng, v.v.). Sử dụng JSON để dễ load sau (trong level_manager.py).
+
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
 ## Kế hoạch dự án
