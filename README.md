@@ -79,9 +79,14 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - HP và speed từ constants.py (import để dùng default).
   - Methods cơ bản: update (cho logic), draw (cho render), take_damage (cho combat), is_colliding_with (dùng helpers).
   - Placeholder cho image (sẽ load sprite thực sau).
+- Ngày 15: Thêm chi tiết hơn cho methods update() và draw() trong base_entity.py. Chúng ta sẽ refine update để bao gồm di chuyển cơ bản (dựa trên speed và direction placeholder), check chết, và delta_time cho mượt mà; draw sẽ thêm vẽ HP bar đơn giản (thanh máu) và hỗ trợ load image nếu có.
+  - Thêm self.direction = pygame.Vector2(0, 0) cho di chuyển (subclass sẽ set direction dựa trên input/AI).
+  - Update: Thêm di chuyển với delta_time (mượt mà, không phụ thuộc FPS), clamp để không ra ngoài màn.
+  - Draw: Thêm HP bar (thanh máu) đơn giản trên đầu entity, dùng colors từ constants.
+  - Import thêm COLOR_RED, COLOR_GREEN, COLOR_BLACK và SCREEN_WIDTH, SCREEN_HEIGHT từ constants.
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
-## Kế hoạch dự án
+## Kế hoạch dự án (dự kiến)
 - Kế hoạch bao gồm:
   - Giai đoạn 1: Lập kế hoạch và Thiết lập (Ngày 1-20): Xây dựng nền tảng dự án.
   - Giai đoạn 2: Phát triển Core Gameplay (Ngày 21-80): Implement nhân vật, tấn công, di chuyển.
