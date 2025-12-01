@@ -16,7 +16,12 @@ def main():
     # Clock để kiểm soát FPS
     clock = pygame.time.Clock()
 
-    game_screen = GameScreen(screen)
+    try:
+        game_screen = GameScreen(screen)
+    except pygame.error as e:
+        print(f"Error loading assets: {e}")
+        pygame.quit()
+        return
 
     # Biến chạy game và test
     running = True
