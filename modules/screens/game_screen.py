@@ -4,6 +4,7 @@ from modules.utils.constants import SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_GREEN
 from modules.utils.helpers import rect_collision
 import json
 from modules.utils.constants import ASSETS_PATH  # Nếu cần, nhưng chưa dùng
+from modules.entities.base_entity import BaseEntity
 
 class GameScreen:
     def __init__(self, screen):
@@ -12,6 +13,7 @@ class GameScreen:
         # Load sprite test
         self.chicken_sprite = pygame.image.load('assets/images/player/chicken.png')  # Đường dẫn tương đối từ root
         self.chicken_rect = self.chicken_sprite.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))  # Vị trí giữa màn
+        self.test_entity = BaseEntity(100, 100, 50, 50, hp=100, speed=5)  # Test entity ở góc
         self.chicken_sprite = pygame.transform.scale(self.chicken_sprite, (300, 300)) # scale gà nhỏ lại
 
     def draw_background(self):
@@ -26,6 +28,9 @@ class GameScreen:
         with open('data/levels.json', 'r', encoding='utf-8') as f:
             levels_data = json.load(f)
             print(levels_data['levels'][0])  # In level đầu tiên để test
+        # Test update và draw entity
+        self.test_entity.update(1 / 60)  # Giả delta_time = 1/FPS
+        self.test_entity.draw(self.screen)
         pygame.draw.rect(self.screen, (0, 100, 0), (0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100))
 
     def draw_test_sprite(self):
