@@ -69,6 +69,8 @@ def main():
         # Giới hạn FPS
         clock.tick(FPS)
 
+        delta_time = clock.get_time() / 1000.0  # Seconds since last frame
+
     # Quit Pygame khi thoát loop
     pygame.quit()
 

@@ -35,6 +35,11 @@ class GameScreen:
         self.player.update(delta_time, keys)
         self.player.draw(self.screen)
         self.player.take_damage(0.1)  # Test giảm HP chậm để thấy bar
+        # Giả sử delta_time từ main.py, nhưng tạm pass từ đây nếu test
+        keys = pygame.key.get_pressed()
+        self.player.update(delta_time, keys)  # Thêm delta_time
+        self.player.draw(self.screen)
+        self.player.take_damage(0.1)  # Test
         pygame.draw.rect(self.screen, (0, 100, 0), (0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100))
 
     def draw_test_sprite(self):
