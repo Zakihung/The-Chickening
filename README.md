@@ -15,6 +15,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - ├── assets/                  `# Tài nguyên tĩnh`
 - │   ├── images/              `# Sprites, backgrounds (e.g., chicken.png, fox.png)`
 - │   │   ├── player/
+- │   │   │    ├── player/chicken.png
 - │   │   ├── enemies/
 - │   │   ├── items/
 - │   │   └── backgrounds/
@@ -65,7 +66,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Class GameScreen nhận screen từ Pygame.
   - draw_background: Fill màu xanh (thêm COLOR_GREEN = (0, 255, 0) vào constants.py nếu chưa).
   - Thêm rect đơn giản để test vẽ.
-
+- Ngày 9: Tích Hợp asset loading bằng cách tạo đầy đủ thư mục assets/images/, tải/load một sprite test (hình gà con pixel art), và hiển thị nó trên màn hình để test.
 
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
