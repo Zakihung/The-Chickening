@@ -2,6 +2,7 @@ import pygame
 from modules.utils.constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR_BLACK, COLOR_WHITE, COLOR_RED
 )
+from modules.screens.game_screen import GameScreen
 
 
 def main():
@@ -14,6 +15,8 @@ def main():
 
     # Clock để kiểm soát FPS
     clock = pygame.time.Clock()
+
+    game_screen = GameScreen(screen)
 
     # Biến chạy game và test
     running = True
@@ -38,7 +41,7 @@ def main():
         # Hiện tại để trống
 
         # Draw/render (vẽ màn hình)
-        screen.fill(background_color)  # Nền thay đổi theo input
+        game_screen.draw_background()
 
         # Vẽ text welcome
         text = font.render("Welcome to The Chickening! Press SPACE to toggle color, ESC to quit.", True, COLOR_WHITE)
