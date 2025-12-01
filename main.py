@@ -3,6 +3,7 @@ from modules.utils.constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR_BLACK, COLOR_WHITE, COLOR_RED
 )
 from modules.screens.game_screen import GameScreen
+from modules.utils.helpers import rect_collision  # Không bắt buộc, nhưng ok
 
 
 def main():
@@ -44,10 +45,13 @@ def main():
 
         # Update logic (sẽ thêm sau)
         # Hiện tại để trống
+        # Lấy mouse pos cho test
+        mouse_pos = pygame.mouse.get_pos()
 
         # Draw/render (vẽ màn hình)
         game_screen.draw_background()
         game_screen.draw_test_sprite()
+        game_screen.draw_test_collision(mouse_pos)
 
         # Vẽ text welcome
         text = font.render("Welcome to The Chickening! Press SPACE to toggle color, ESC to quit.", True, COLOR_WHITE)

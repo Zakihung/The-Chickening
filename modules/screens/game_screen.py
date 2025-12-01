@@ -1,6 +1,7 @@
 # modules/screens/game_screen.py
 import pygame
 from modules.utils.constants import SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_GREEN
+from modules.utils.helpers import rect_collision
 
 class GameScreen:
     def __init__(self, screen):
@@ -18,3 +19,12 @@ class GameScreen:
     def draw_test_sprite(self):
         """Hàm vẽ sprite test (gà con)."""
         self.screen.blit(self.chicken_sprite, self.chicken_rect)
+
+    def draw_test_collision(self, mouse_pos):
+        """Test collision: Vẽ rect theo mouse, check va chạm với chicken."""
+        test_rect = pygame.Rect(mouse_pos[0] - 25, mouse_pos[1] - 25, 50, 50)  # Rect 50x50 quanh mouse
+        if rect_collision(test_rect, self.chicken_rect):
+            color = (255, 0, 0)  # Đỏ nếu collide
+        else:
+            color = (255, 255, 255)  # Trắng nếu không
+        pygame.draw.rect(self.screen, color, test_rect, 3)  # Vẽ viền dày 3px
