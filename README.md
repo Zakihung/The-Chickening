@@ -56,7 +56,11 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Thêm xử lý KEYDOWN cho ESC để quit (dễ test).
   - Thêm text đơn giản để window không trống, dễ kiểm tra font hoạt động.
   - Cấu trúc loop chuẩn: Events -> Update -> Draw -> Flip -> Tick.
-
+- Ngày 7: Thêm FPS counter (hiển thị frames per second để debug performance) và basic event handling (xử lý sự kiện như nhấn phím để test tương tác)
+  - Import thêm COLOR_RED từ constants (thêm vào constants.py nếu chưa: COLOR_RED = (255, 0, 0)).
+  - Thêm biến background_color để test input.
+  - Event KEYDOWN cho SPACE: Thay đổi màu nền (đen <-> đỏ) để thấy input hoạt động.
+  - FPS counter: Sử dụng clock.get_fps() và blit text ở (10, 10).
 
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
