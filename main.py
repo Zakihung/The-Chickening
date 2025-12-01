@@ -1,6 +1,6 @@
 import pygame
 from modules.utils.constants import (
-    SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR_BLACK, COLOR_WHITE
+    SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR_BLACK, COLOR_WHITE, COLOR_RED
 )
 
 
@@ -15,8 +15,12 @@ def main():
     # Clock để kiểm soát FPS
     clock = pygame.time.Clock()
 
-    # Biến chạy game
+    # Biến chạy game và test
     running = True
+    background_color = COLOR_BLACK  # Màu nền mặc định
+
+    # Font cho text và FPS
+    font = pygame.font.SysFont(None, 36)
 
     # Game loop chính
     while running:
@@ -24,20 +28,25 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            # Thêm xử lý phím cơ bản (ví dụ: ESC để quit)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
+                if event.key == pygame.K_SPACE:  # Test basic input: Thay đổi màu nền
+                    background_color = COLOR_RED if background_color == COLOR_BLACK else COLOR_BLACK
 
         # Update logic (sẽ thêm sau)
         # Hiện tại để trống
 
         # Draw/render (vẽ màn hình)
-        screen.fill(COLOR_BLACK)  # Nền đen
-        # Ví dụ: Vẽ text test để kiểm tra
-        font = pygame.font.SysFont(None, 36)  # Font mặc định
-        text = font.render("Welcome to The Chickening! Press ESC to quit.", True, COLOR_WHITE)
-        screen.blit(text, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2))
+        screen.fill(background_color)  # Nền thay đổi theo input
+
+        # Vẽ text welcome
+        text = font.render("Welcome to The Chickening! Press SPACE to toggle color, ESC to quit.", True, COLOR_WHITE)
+        screen.blit(text, (SCREEN_WIDTH // 2 - 300, SCREEN_HEIGHT // 2))
+
+        # Vẽ FPS counter ở góc trên trái
+        fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, COLOR_WHITE)
+        screen.blit(fps_text, (10, 10))
 
         # Flip display để cập nhật
         pygame.display.flip()
