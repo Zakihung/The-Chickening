@@ -183,4 +183,108 @@ Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
   - Ngày 197: Documentation cuối cùng.
   - Ngày 198: Commit final Git.
   - Ngày 199: Buffer cho bất kỳ sửa chữa cuối.
-  - Ngày 200: Hoàn thành: Release version 1.0
+  - Ngày 200: Hoàn thành: Release version 1.0.
+
+# Promt để tiếp tục dự án khi bắt đầu một chat mới
+Trả lời bằng tiếng việt. Tôi đã lên ý tưởng gameplay để lập trình game này hãy giúp tôi tạo dự án game này với python 3.8 và pygame, tạo thành nhiều module nhỏ để dễ quản lý và chỉnh sửa, Gameplay như sau: "THE CHICKENING – GAMEPLAY DESIGN
+🐥 1. Nhân vật chính: Gà con
+
+Có thanh HP, tốc độ di chuyển, sát thương (tùy theo trang bị).
+Có thể lăn né (dodge roll) để tránh đòn, cooldown ngắn.
+Sở hữu kỹ năng chủ động và bị động mở khóa dần theo màn.
+Có ba loại tấn công chính:
+Mổ tầm gần – tốc độ nhanh, sát thương thấp.
+Bắn lông tầm xa – dùng năng lượng (Eggnergy), sát thương trung bình.
+Đẻ trứng nổ – sát thương cao, hạn chế số lượng.
+
+
+🦊 2. Kẻ thù – Đội quân Cáo đỏ
+Mỗi loại có hành vi (AI) riêng:
+Loại cáoVũ khí/Kỹ năngHành viCáo chạy nhanhVuốt càoLiên tục áp sát, di chuyển zig-zagCáo cung thủBắn tênGiữ khoảng cách, né khi gà đến gầnCáo ném bomBom khoai tâyTấn công diện rộng, tạo vùng nguy hiểmCáo giápKhiên gỗChỉ lộ điểm yếu phía sauCáo pháp sư (màn sau)Lửa + triệu hồiBuff đồng đội, tạo vòng cản đường
+🏰 3. Trùm Cáo Đỏ (Boss)
+
+Mỗi 5 màn gặp 1 Boss cực mạnh
+Có 3 pha biến đổi (tăng tốc, dùng skill mới)
+Ví dụ Boss 1:
+Cáo Đại Tướng: Dùng cây thương dài + lao về phía gà
+Tạo đàn cáo con sau khi mất 50% HP
+
+
+🌾 4. Thu thập tài nguyên: Thóc
+
+Rơi từ quái hoặc xuất hiện trong hũ, bụi rậm
+Là tiền tệ để:
+Mua trang bị
+Mở kỹ năng
+Nâng cấp chuồng để nhận buff toàn trận
+
+
+Thu thập xong phải quay về Chuồng để lưu thóc → Nếu chết giữa chừng sẽ mất một phần thóc chưa cất.
+Cơ chế rủi ro – thưởng (risk & reward)
+🏠 5. Chuồng Gà – Safe Zone
+
+Cáo đỏ không thể vào
+Nơi hồi máu & nâng cấp
+Các hạng mục:
+Shop: vũ khí, áo giáp, phụ kiện (như Feather Cape tăng tốc, Egg Launcher tăng damage)
+Skill Tree: chọn 1 trong 3 kỹ năng random theo phong cách roguelite
+Mission Board: nhiệm vụ thưởng thêm thóc
+
+
+Nâng cấp chuồng giúp giảm giá shop, mở skill mới, tăng regen HP.
+🗺️ 6. Bản đồ & Màn chơi
+
+Kiểu wave-based arena trong môi trường mở theo từng khu:
+Trang trại, rừng thông, làng cáo, núi lửa,...
+
+Mỗi màn:
+Gồm 5–10 đợt tấn công
+Kẻ thù xuất hiện từ các hướng, có spawn point phá được
+
+
+Phá được hết điểm spawn + tiêu diệt quái sẽ qua màn.
+💥 7. Vật phẩm & Trang bị
+Phân loại độ hiếm (Common → Legendary)
+Ví dụ món đồ:
+Trang bịHiệu ứngMỏ thépTăng sát thương gầnBộ lông thépTăng giáp, giảm tốc độThần Lông Bất TửNé 1 đòn mỗi 15sGiày Phụt LôngTăng tốc + tạo sát thương khi lăn né
+Các vật phẩm có hiệu ứng hiệp lực:
+
+“Lông cháy” + “Trứng xăng” → đánh gây cháy lâu hơn
+
+🌀 8. Kỹ năng (Skill Tree)
+Ba nhánh phát triển:
+
+Chiến binh Mỏ Sắt – sát thương cận chiến, tăng máu
+Xạ thủ Xạ Lông – bắn xa, crit rate cao
+Bom thủ Trứng Gà – trứng nổ mạnh, sát thương lan
+
+Mỗi lần nâng cấp chọn 1 trong 3 kỹ năng ngẫu nhiên → tính chất roguelite, tăng replayability.
+🧠 9. AI và độ khó
+
+Theo thời gian, tốc độ và số lượng cáo tăng tiến tuyến tính
+Các đợt sau có đa dạng quái buộc người chơi phải thay đổi chiến thuật
+Boss học mô thức né nếu người chơi lạm dụng một kiểu đánh
+
+🌈 10. Đồ họa & Hiệu ứng
+
+Pixel art angled top-down / oblique projection
+Màu sắc tươi, dễ thương nhưng chiến đấu cảm giác “đã tay”
+Hiệu ứng máu chuyển sang lông văng để phù hợp rating + hài hước
+
+🔊 11. Âm thanh
+
+Nhạc vui, tiết tấu nhanh theo từng wave
+Hiệu ứng âm thanh dễ thương:
+“Cục cục!” khi dùng kỹ năng
+Cáo trúng đòn kêu “Auu!”
+
+
+🏆 12. Mục tiêu trò chơi
+
+Sống sót và qua từng màn
+Đánh bại Đại Trùm Cáo Chúa ở màn cuối
+Mở Game+ với quái khó hơn và skin mới"
+Đầu tiên bạn hãy lên kế hoạch dự án theo ngày (tôi có quỹ thời gian là 200 ngày để hoàn thành), mỗi ngày đặt một mục tiêu cụ thể. Hãy tổ chức thư mục các module và các file của toàn bộ dự án
+
+Sau đó, chúng ta đã thực hiện đến Ngày 10 theo hướng dẫn từng bước. Dự án đang ở giai đoạn setup cơ bản: có main.py với game loop, constants.py, game_screen.py với draw background và load sprite test (chicken.png), FPS counter, event handling cơ bản. Repo GitHub: https://github.com/Zakihung/The-Chickening.git
+Bây giờ, hãy tiếp tục từ Ngày 11: Viết helpers.py trong utils/ cho các hàm tiện ích (collision detection). Hãy cung cấp hướng dẫn chi tiết từng bước cho ngày này, tương tự các ngày trước.
