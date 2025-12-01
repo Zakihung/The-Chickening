@@ -26,8 +26,8 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   └── levels.json          `# Cấu trúc màn chơi`
 - ├── modules/                 `# Các module chính`
 - │   ├── entities/            `# Các thực thể trong game`
-- │   │   ├── base_entity.py   `# Class Entity base (position, health, etc.)`
-- │   │   ├── player.py        `# Class Player (attacks, dodge, skills)`
+- │   │   ├── base_entity.py   `# Class base cho entities (position, HP, update với di chuyển delta_time, draw với HP bar)`
+- │   │   ├── player.py        `# Class Player (kế thừa BaseEntity, movement input, eggnergy)`
 - │   │   ├── enemy.py         `# Class Enemy base (AI behaviors)`
 - │   │   ├── boss.py          `# Class Boss (phases, special attacks)`
 - │   │   ├── projectile.py    `# Đạn (lông, trứng nổ)`
@@ -84,6 +84,11 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Update: Thêm di chuyển với delta_time (mượt mà, không phụ thuộc FPS), clamp để không ra ngoài màn.
   - Draw: Thêm HP bar (thanh máu) đơn giản trên đầu entity, dùng colors từ constants.
   - Import thêm COLOR_RED, COLOR_GREEN, COLOR_BLACK và SCREEN_WIDTH, SCREEN_HEIGHT từ constants.
+- Ngày 16: Tạo file player.py trong modules/entities/ để định nghĩa class Player kế thừa từ BaseEntity. Chúng ta sẽ thêm thuộc tính cụ thể cho gà con như HP mặc định, speed từ constants, và placeholder cho attacks/dodge (sẽ chi tiết sau).
+  - Kế thừa BaseEntity, set vị trí giữa màn, load chicken.png và scale.
+  - Thêm eggnergy, damages từ gameplay.
+  - Update: Thêm param keys cho input, set direction dựa WASD/arrows.
+  - Draw: Thêm eggnergy bar (vàng) dưới HP bar.
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
 ## Kế hoạch dự án (dự kiến)
