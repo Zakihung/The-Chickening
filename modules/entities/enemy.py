@@ -65,7 +65,8 @@ class Enemy(BaseEntity):
                     offset = math.sin(
                         self.time * self.zigzag_frequency) * self.zigzag_amplitude / dist  # Scale với dist
                     self.direction = pygame.Vector2(base_dir.x, base_dir.y + offset)
-                    self.direction.normalize_ip() if self.direction.length() > 0 else None
+                    if self.direction.length() > 0:
+                        self.direction.normalize_ip()
                     self.speed = ENEMY_SPEED_BASE * 1.5  # Tốc độ nhanh hơn cho runner
 
                     # Attack nếu trong range (placeholder damage)
@@ -73,33 +74,24 @@ class Enemy(BaseEntity):
                         player.take_damage(self.attack_damage)
                         # Cooldown attack sau
 
-                else:
-                    # Fallback random nếu không phải runner
-                    self.direction_change_timer -= delta_time
-                    if self.direction_change_timer <= 0:
-                        angle = random.uniform(0, 2 * math.pi)
-                        self.direction = pygame.Vector2(math.cos(angle), math.sin(angle))
-                        self.direction_change_timer = random.uniform(1, 2)
-
-                if self.type == 'archer':
+                elif self.type == 'archer':
                     # Archer AI: Giữ khoảng cách, né nếu gần, bắn nếu trong range
-                    if dist > 0:
-                        if dist < self.min_distance:
-                            # Né: Di chuyển ngược direction tới player
-                            self.direction = -base_dir
-                        elif dist > self.max_distance:
-                            # Áp sát nhẹ để vào range bắn
-                            self.direction = base_dir
-                        else:
-                            # Giữ vị trí, bắn
-                            self.direction = pygame.Vector2(0, 0)  # Dừng di chuyển
-                            if self.shoot_cooldown <= 0:
-                                # Spawn arrow hướng tới player
-                                arrow_dir = base_dir
-                                arrow = Projectile(self.rect.centerx, self.rect.centery, arrow_dir, 'ranged',
-                                                   self.arrow_damage, self.arrow_speed)
-                                self.projectiles.append(arrow)
-                                self.shoot_cooldown = 1.5  # Reset cooldown
+                    if dist < self.min_distance:
+                        # Né: Di chuyển ngược direction tới player
+                        self.direction = -base_dir
+                    elif dist > self.max_distance:
+                        # Áp sát nhẹ để vào range bắn
+                        self.direction = base_dir
+                    else:
+                        # Giữ vị trí, bắn
+                        self.direction = pygame.Vector2(0, 0)  # Dừng di chuyển
+                        if self.shoot_cooldown <= 0:
+                            # Spawn arrow hướng tới player
+                            arrow_dir = base_dir
+                            arrow = Projectile(self.rect.centerx, self.rect.centery, arrow_dir, 'ranged',
+                                               self.arrow_damage, self.arrow_speed)
+                            self.projectiles.append(arrow)
+                            self.shoot_cooldown = 1.5  # Reset cooldown
 
                     # Update cooldown
                     if self.shoot_cooldown > 0:
@@ -112,6 +104,13 @@ class Enemy(BaseEntity):
                         if not proj.alive:
                             self.projectiles.remove(proj)
 
+                else:
+                    # Fallback random cho type khác
+                    self.direction_change_timer -= delta_time
+                    if self.direction_change_timer <= 0:
+                        angle = random.uniform(0, 2 * math.pi)
+                        self.direction = pygame.Vector2(math.cos(angle), math.sin(angle))
+                        self.direction_change_timer = random.uniform(1, 2)
 
         else:
             # No player: Random AI
@@ -140,3 +139,7 @@ class Enemy(BaseEntity):
         else:
             pygame.draw.rect(screen, color, self.rect)
         super().draw(screen)  # HP bar
+
+        # Vẽ projectiles của enemy
+        for proj in self.projectiles:
+            proj.draw(screen)

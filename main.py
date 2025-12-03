@@ -1,12 +1,8 @@
 import pygame
 from modules.utils.constants import (
-    SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR_BLACK, COLOR_WHITE, COLOR_RED
+    SCREEN_WIDTH, SCREEN_HEIGHT, FPS, COLOR_BLACK, COLOR_WHITE
 )
 from modules.screens.game_screen import GameScreen
-from modules.utils.helpers import rect_collision
-import json
-from modules.utils.constants import ASSETS_PATH
-
 
 def main():
     # Khởi tạo Pygame
@@ -26,54 +22,38 @@ def main():
         pygame.quit()
         return
 
-    # Biến chạy game và test
+    # Biến chạy game
     running = True
-    background_color = COLOR_BLACK  # Màu nền mặc định
-
-    # Font cho text và FPS
-    font = pygame.font.SysFont(None, 36)
 
     # Game loop chính
     while running:
-        # Xử lý events (sự kiện)
+        delta_time = clock.get_time() / 1000.0  # Seconds since last frame
+
+        # Xử lý events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                if event.key == pygame.K_SPACE:  # Test basic input: Thay đổi màu nền
-                    background_color = COLOR_RED if background_color == COLOR_BLACK else COLOR_BLACK
 
-        # Update logic (sẽ thêm sau)
-        # Hiện tại để trống
-        # Lấy mouse pos cho test
-        mouse_pos = pygame.mouse.get_pos()
+        # Lấy keys
+        keys = pygame.key.get_pressed()
 
-        # Draw/render (vẽ màn hình)
+        # Update game_screen với delta_time và keys
+        game_screen.update(delta_time, keys)
+
+        # Draw
         game_screen.draw_background()
-        game_screen.draw_test_sprite()
-        game_screen.draw_test_collision(mouse_pos)
 
-        # Vẽ text welcome
-        text = font.render("Welcome to The Chickening! Press SPACE to toggle color, ESC to quit.", True, COLOR_WHITE)
-        screen.blit(text, (SCREEN_WIDTH // 2 - 300, SCREEN_HEIGHT // 2))
-
-        # Vẽ FPS counter ở góc trên trái
-        fps_text = font.render(f"FPS: {int(clock.get_fps())}", True, COLOR_WHITE)
-        screen.blit(fps_text, (10, 10))
-
-        # Flip display để cập nhật
+        # Flip display
         pygame.display.flip()
 
         # Giới hạn FPS
         clock.tick(FPS)
 
-        delta_time = clock.get_time() / 1000.0  # Seconds since last frame
-
-    # Quit Pygame khi thoát loop
+    # Quit Pygame
     pygame.quit()
-
 
 if __name__ == "__main__":
     main()

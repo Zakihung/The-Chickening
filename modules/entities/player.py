@@ -3,10 +3,11 @@ import pygame
 from modules.entities.base_entity import BaseEntity
 from modules.utils.constants import (
     PLAYER_HP_DEFAULT, PLAYER_SPEED_DEFAULT, EGGNERGY_MAX, DODGE_COOLDOWN,
-    SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, COLOR_BLACK, COLOR_RED, COLOR_BLUE,
+    SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, COLOR_BLACK, COLOR_RED,
     MELEE_RANGE, PLAYER_DAMAGE_DEFAULT, RANGED_RANGE, BOMB_DAMAGE, BOMB_AOE_RADIUS, BOMB_LIMIT
 )
 from modules.entities.projectile import Projectile
+from modules.utils.helpers import rect_collision
 
 class Player(BaseEntity):
     def __init__(self):
@@ -14,7 +15,6 @@ class Player(BaseEntity):
         Class cho nhân vật chính: Gà con.
         Kế thừa từ BaseEntity, set vị trí giữa màn, load sprite.
         """
-        # Gọi super init với vị trí giữa màn, kích thước sprite
         super().__init__(
             x=SCREEN_WIDTH // 2 - 50,  # Trung tâm x
             y=SCREEN_HEIGHT // 2 - 50,  # Trung tâm y
@@ -34,37 +34,29 @@ class Player(BaseEntity):
 
         # Thuộc tính player-specific
         self.eggnergy = EGGNERGY_MAX  # Năng lượng cho bắn lông
-        self.dodge_cooldown = 0  # Cooldown dodge (milliseconds)
-        self.dodge_duration = 0  # Thời gian dodge active (cho invincible)
-        # Attacks placeholder (sẽ thêm sau)
-        self.melee_damage = 10
-        self.ranged_damage = 15
-        self.bomb_damage = 50
-        self.bomb_count = 3  # Hạn chế trứng nổ
         self.invincible = False  # Flag invincible trong dodge
         self.dodge_speed_multiplier = 2  # Tăng speed gấp 2 khi dodge
         self.dodge_duration = 0  # Timer duration (seconds)
         self.dodge_cooldown_timer = 0  # Timer cooldown (seconds)
-        self.melee_cooldown = 0  # Cooldown attack (seconds, ví dụ 0.5s để tránh spam)
+        self.melee_cooldown = 0  # Cooldown attack (seconds)
         self.melee_duration = 0  # Duration active hitbox (short, 0.2s)
         self.melee_damage = PLAYER_DAMAGE_DEFAULT  # Sát thương từ constants
         self.melee_hitbox = None  # Rect cho hitbox attack
-        self.ranged_cooldown = 0  # Cooldown bắn (seconds, ví dụ 0.3s)
+        self.ranged_cooldown = 0  # Cooldown bắn (seconds)
         self.ranged_cost = 10  # Eggnergy consume mỗi shot
-        self.projectiles = []  # List placeholder cho projectiles (dict với position, direction)
-        self.bomb_cooldown = 0  # Cooldown đẻ bomb (seconds, ví dụ 1s)
+        self.projectiles = []  # List Projectile instances
+        self.bomb_cooldown = 0  # Cooldown đẻ bomb (seconds)
         self.bomb_max = BOMB_LIMIT  # Limit max từ constants (3)
         self.bomb_current = self.bomb_max  # Số bomb hiện có
-        self.bombs = []  # List placeholder cho bombs (dict với rect, timer explode, exploded flag)
-        self.bomb_explode_delay = 2  # 2s delay trước explode
-        self.enemies = []  # Placeholder list enemies để test collision (sẽ từ level_manager sau)
+        self.bomb_regen_timer = 0  # Timer regen bomb
+        self.enemies = []  # List enemies để check collision
 
     def update(self, delta_time, keys):
         """
-        Override update: Xử lý input di chuyển chi tiết, dodge đầy đủ.
+        Override update: Xử lý input di chuyển, attacks, dodge.
         :param keys: pygame.key.get_pressed() để check input
         """
-        super().update(delta_time)  # Gọi base update (di chuyển và clamp)
+        super().update(delta_time)
 
         # Xử lý input di chuyển
         self.direction = pygame.Vector2(0, 0)
@@ -87,16 +79,23 @@ class Player(BaseEntity):
 
         # Dodge roll logic
         if keys[pygame.K_SPACE] and self.dodge_cooldown_timer <= 0 and self.dodge_duration <= 0:
-            # Bắt đầu dodge nếu có direction (không đứng yên)
             if self.direction.length() > 0:
                 self.dodge_duration = 0.5  # 0.5s dodge active
                 self.dodge_cooldown_timer = DODGE_COOLDOWN / 1000.0  # 1s cooldown
                 self.invincible = True
                 self.speed *= self.dodge_speed_multiplier  # Tăng speed
 
+        # Update dodge timers
+        if self.dodge_duration > 0:
+            self.dodge_duration -= delta_time
+            if self.dodge_duration <= 0:
+                self.invincible = False
+                self.speed /= self.dodge_speed_multiplier
+        if self.dodge_cooldown_timer > 0:
+            self.dodge_cooldown_timer -= delta_time
+
         # Melee attack logic (key J)
         if keys[pygame.K_j] and self.melee_cooldown <= 0 and self.melee_duration <= 0:
-            # Bắt đầu melee nếu có direction
             if self.direction.length() > 0:
                 self.melee_duration = 0.2  # 0.2s active
                 self.melee_cooldown = 0.5  # 0.5s cooldown
@@ -107,7 +106,20 @@ class Player(BaseEntity):
                     self.rect.centery + hitbox_offset.y - 25,
                     50, 50  # Kích thước hitbox nhỏ
                 )
-                # TODO: Check collision với enemies và apply damage (khi có enemy)
+
+        # Check melee collision với enemies
+        if self.melee_hitbox:
+            for enemy in self.enemies:
+                if rect_collision(self.melee_hitbox, enemy.rect):
+                    enemy.take_damage(self.melee_damage)
+
+        # Update melee timers
+        if self.melee_duration > 0:
+            self.melee_duration -= delta_time
+            if self.melee_duration <= 0:
+                self.melee_hitbox = None
+        if self.melee_cooldown > 0:
+            self.melee_cooldown -= delta_time
 
         # Ranged attack logic (key K)
         if keys[pygame.K_k] and self.ranged_cooldown <= 0 and self.eggnergy >= self.ranged_cost:
@@ -117,39 +129,9 @@ class Player(BaseEntity):
                 proj = Projectile(self.rect.centerx, self.rect.centery, self.direction, 'ranged', 15, 10)
                 self.projectiles.append(proj)
 
-        # Update cooldown
+        # Update ranged cooldown
         if self.ranged_cooldown > 0:
             self.ranged_cooldown -= delta_time
-
-        # Update projectiles placeholder (di chuyển, remove nếu out screen)
-        for proj in self.projectiles[:]:
-            # Di chuyển projectile
-            proj['rect'].x += proj['dir'].x * proj['speed']
-            proj['rect'].y += proj['dir'].y * proj['speed']
-
-            # Tính khoảng cách đã bay từ vị trí bắn ban đầu
-            distance_traveled = (
-                                        (proj['rect'].centerx - self.rect.centerx) ** 2 +
-                                        (proj['rect'].centery - self.rect.centery) ** 2
-                                ) ** 0.5
-
-            # Nếu vượt quá tầm bắn HOẶC ra khỏi màn hình → xóa
-            if distance_traveled > RANGED_RANGE or \
-                    not (0 < proj['rect'].centerx < SCREEN_WIDTH and 0 < proj['rect'].centery < SCREEN_HEIGHT):
-                self.projectiles.remove(proj)
-
-        for proj in self.projectiles[:]:
-            proj.update(delta_time)
-            # Check collision với placeholder enemies
-            proj.check_collision(self.enemies)  # Pass list enemies
-            if not proj.alive:
-                self.projectiles.remove(proj)
-
-        self.bomb_regen_timer = getattr(self, 'bomb_regen_timer', 0)
-        self.bomb_regen_timer += delta_time
-        if self.bomb_regen_timer >= 10 and self.bomb_current < self.bomb_max:
-            self.bomb_current += 1
-            self.bomb_regen_timer = 0
 
         # Bomb attack logic (key L)
         if keys[pygame.K_l] and self.bomb_cooldown <= 0 and self.bomb_current > 0:
@@ -163,39 +145,24 @@ class Player(BaseEntity):
             proj = Projectile(start_x, start_y, self.direction, 'bomb', BOMB_DAMAGE, 5, BOMB_AOE_RADIUS)
             self.projectiles.append(proj)
 
-        # Update cooldown
+        # Update bomb cooldown
         if self.bomb_cooldown > 0:
             self.bomb_cooldown -= delta_time
 
-        # Update bombs placeholder (countdown timer, explode khi =0)
-        for bomb in self.bombs[:]:
-            bomb['timer'] -= delta_time
-            if bomb['timer'] <= 0 and not bomb['exploded']:
-                bomb['exploded'] = True
-                # Explode logic: Tạo AOE circle, apply damage trong radius (placeholder)
-                # TODO: Check entities trong BOMB_AOE_RADIUS và damage
-                # Remove sau explode (hoặc delay để vẽ effect)
-                self.bombs.remove(bomb)
-                # Regen bomb_current placeholder (ví dụ: regen chậm)
-            # Placeholder regen bomb_current (tăng 1 mỗi 10s, max limit)
-        if len(self.bombs) < self.bomb_max:
-            # Regen logic đơn giản (sẽ refine sau)
-            pass
-
-        # Update timers
-        if self.melee_duration > 0:
-            self.melee_duration -= delta_time
-            if self.melee_duration <= 0:
-                self.melee_hitbox = None
-        if self.melee_cooldown > 0:
-            self.melee_cooldown -= delta_time
-
+        # Update projectiles
         for proj in self.projectiles[:]:
             proj.update(delta_time)
+            proj.check_collision(self.enemies)  # Check hit enemies
             if not proj.alive:
                 self.projectiles.remove(proj)
 
-        # Regen eggnergy placeholder
+        # Regen bomb_current (mỗi 10s)
+        self.bomb_regen_timer += delta_time
+        if self.bomb_regen_timer >= 10 and self.bomb_current < self.bomb_max:
+            self.bomb_current += 1
+            self.bomb_regen_timer = 0
+
+        # Regen eggnergy
         self.eggnergy = min(self.eggnergy + 10 * delta_time, EGGNERGY_MAX)
 
     def draw(self, screen):
@@ -210,16 +177,18 @@ class Player(BaseEntity):
         else:
             super().draw(screen)  # Bình thường
 
+        # Vẽ melee hitbox nếu active
         if self.melee_hitbox:
             pygame.draw.rect(screen, COLOR_RED, self.melee_hitbox, 2)
 
+        # Vẽ projectiles
         for proj in self.projectiles:
-            proj.draw(self.screen)
+            proj.draw(screen)
 
-        # Vẽ eggnergy bar (giữ nguyên)
+        # Vẽ eggnergy bar
         energy_ratio = self.eggnergy / EGGNERGY_MAX
         bar_width = self.rect.width * energy_ratio
-        energy_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 20, bar_width, 5)
+        energy_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 20, bar_width, 5)  # Dưới HP bar
         pygame.draw.rect(screen, COLOR_YELLOW, energy_bar_rect)
         full_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.rect.width, 5)
         pygame.draw.rect(screen, COLOR_BLACK, full_bar_rect, 1)
