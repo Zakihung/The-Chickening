@@ -39,10 +39,14 @@ class Player(BaseEntity):
         self.ranged_damage = 15
         self.bomb_damage = 50
         self.bomb_count = 3  # Hạn chế trứng nổ
+        self.invincible = False  # Flag invincible trong dodge
+        self.dodge_speed_multiplier = 2  # Tăng speed gấp 2 khi dodge
+        self.dodge_duration = 0  # Timer duration (seconds)
+        self.dodge_cooldown_timer = 0  # Timer cooldown (seconds)
 
     def update(self, delta_time, keys):
         """
-        Override update: Xử lý input di chuyển chi tiết, dodge placeholder.
+        Override update: Xử lý input di chuyển chi tiết, dodge đầy đủ.
         :param keys: pygame.key.get_pressed() để check input
         """
         super().update(delta_time)  # Gọi base update (di chuyển và clamp)
@@ -62,39 +66,47 @@ class Player(BaseEntity):
             # Flip sprite sang phải (gốc)
             self.image = self.original_image
 
-        # Normalize direction để tốc độ chéo = thẳng (sqrt(2) fix)
+        # Normalize direction để tốc độ chéo = thẳng
         if self.direction.length_squared() > 0:
             self.direction.normalize_ip()
 
-        # Placeholder cho dodge roll (SPACE)
-        if keys[pygame.K_SPACE] and self.dodge_cooldown <= 0:
-            # Bắt đầu dodge: Tăng speed tạm, set duration, cooldown
-            self.speed *= 2  # Tốc độ lăn né nhanh gấp đôi
-            self.dodge_duration = 0.5  # 0.5 giây invincible (sẽ dùng timer)
-            self.dodge_cooldown = DODGE_COOLDOWN / 1000  # Convert ms to seconds
-            # TODO: Thêm invincible flag
+        # Dodge roll logic
+        if keys[pygame.K_SPACE] and self.dodge_cooldown_timer <= 0 and self.dodge_duration <= 0:
+            # Bắt đầu dodge nếu có direction (không đứng yên)
+            if self.direction.length() > 0:
+                self.dodge_duration = 0.5  # 0.5s dodge active
+                self.dodge_cooldown_timer = DODGE_COOLDOWN / 1000.0  # 1s cooldown
+                self.invincible = True
+                self.speed *= self.dodge_speed_multiplier  # Tăng speed
 
-        # Update cooldown và duration (dùng delta_time)
-        if self.dodge_cooldown > 0:
-            self.dodge_cooldown -= delta_time
+        # Update timers với delta_time
         if self.dodge_duration > 0:
             self.dodge_duration -= delta_time
             if self.dodge_duration <= 0:
-                self.speed = PLAYER_SPEED_DEFAULT  # Reset speed sau dodge
+                self.invincible = False
+                self.speed /= self.dodge_speed_multiplier  # Reset speed
+        if self.dodge_cooldown_timer > 0:
+            self.dodge_cooldown_timer -= delta_time
 
-        # Regen eggnergy placeholder (tăng dần theo thời gian)
+        # Regen eggnergy placeholder
         self.eggnergy = min(self.eggnergy + 10 * delta_time, EGGNERGY_MAX)
 
     def draw(self, screen):
         """
-        Override draw: Vẽ player và thêm eggnergy bar.
+        Override draw: Vẽ player và thêm eggnergy bar, hiệu ứng dodge.
         """
-        super().draw(screen)  # Gọi base draw (sprite và HP bar)
+        if self.image and self.invincible:
+            # Hiệu ứng invincible: Tint đỏ (placeholder)
+            tint_surface = self.image.copy()
+            tint_surface.fill((255, 0, 0, 128), special_flags=pygame.BLEND_RGBA_MULT)
+            screen.blit(tint_surface, self.rect.topleft)
+        else:
+            super().draw(screen)  # Bình thường
 
-        # Vẽ eggnergy bar dưới HP bar
+        # Vẽ eggnergy bar (giữ nguyên)
         energy_ratio = self.eggnergy / EGGNERGY_MAX
         bar_width = self.rect.width * energy_ratio
-        energy_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 20, bar_width, 5)  # Dưới HP bar
+        energy_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 20, bar_width, 5)
         pygame.draw.rect(screen, COLOR_YELLOW, energy_bar_rect)
         full_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.rect.width, 5)
         pygame.draw.rect(screen, COLOR_BLACK, full_bar_rect, 1)
