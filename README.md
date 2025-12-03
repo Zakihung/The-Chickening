@@ -159,9 +159,12 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - Ngày 49: Tạo file main_menu.py trong modules/screens/ để định nghĩa class MainMenu (menu chính: buttons start game, options (placeholder), quit, use Pygame rect/text for clickable buttons, handle mouse click to transition states).
 - Ngày 49.5: Tạo main_menu.py với buttons (menu state in main.py, click transition to game, options placeholder, quit), và test menu/buttons work in main.py. Bây giờ, tôi sẽ sửa nội dung các file đính kèm (enemy.py, player.py, main.py, game_screen.py, projectile.py, boss.py, skills.py, main_menu.py, item_manager.py, level_manager.py, sound_manager.py) để đảm bảo code nhất quán, remove test code (test equip/upgrade/skills in game_screen), integrate sound_manager triggers on events (attack/hit/explode/click), refine collision/drop/item/skill apply, fix potential errors (init lists before clear, pass sound_manager), and basic options screen placeholder. Không thực hiện bất kỳ thay đổi nào cho Ngày 50 hoặc sau.
 
-Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
+#### Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
-## Kế hoạch dự án (dự kiến)
+### Link grok to day 49.5
+https://grok.com/share/c2hhcmQtMg_5fbfd789-8046-43d5-abe3-051a35b16b60
+
+## Kế hoạch dự án 1 (dự kiến)
 - Kế hoạch bao gồm:
   - Giai đoạn 1: Lập kế hoạch và Thiết lập (Ngày 1-20): Xây dựng nền tảng dự án.
   - Giai đoạn 2: Phát triển Core Gameplay (Ngày 21-80): Implement nhân vật, tấn công, di chuyển.
@@ -273,6 +276,66 @@ Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
   - Ngày 198: Commit final Git.
   - Ngày 199: Buffer cho bất kỳ sửa chữa cuối.
   - Ngày 200: Hoàn thành: Release version 1.0.
+
+## Kế hoạch dự án 2 (dự kiến)
+  - Ngày 1-11: (Đã hoàn thành theo bạn: Setup repo, main.py, constants.py, game_screen.py với background/sprite test, FPS, events, helpers.py với collision).
+  - Ngày 12: Thiết kế database đơn giản (JSON) cho items và skills trong data/ (chi tiết hướng dẫn ở phần sau).
+  - Ngày 13: Thiết kế levels.json trong data/ cho cấu trúc màn chơi.
+  - Ngày 14: Tạo base_entity.py trong entities/ với position, health cơ bản.
+  - Ngày 15: Thêm update và draw methods vào base_entity.py.
+  - Ngày 16: Tạo player.py kế thừa base_entity, thêm HP, speed.
+  - Ngày 17: Thêm input handling cho player movement trong player.py.
+  - Ngày 18: Thêm dodge roll cho player với cooldown.
+  - Ngày 19: Thêm melee attack (mổ) cho player.
+  - Ngày 20: Thêm ranged attack (bắn lông) với eggnergy.
+  - Ngày 21: Thêm bomb attack (đẻ trứng nổ) với limit.
+  - Ngày 22: Tạo projectile.py cho đạn (lông, trứng).
+  - Ngày 23: Tích hợp projectile vào player attacks.
+  - Ngày 24: Tạo enemy.py base với AI simple (di chuyển ngẫu nhiên).
+  - Ngày 25: Thêm AI cho cáo chạy nhanh (zig-zag áp sát).
+  - Ngày 26: Thêm AI cho cáo cung thủ (giữ khoảng cách, bắn tên).
+  - Ngày 27: Thêm AI cho cáo ném bom (tấn công diện rộng).
+  - Ngày 28: Thêm AI cho cáo giáp (điểm yếu phía sau).
+  - Ngày 29: Thêm AI cho cáo pháp sư (buff, vòng cản).
+  - Ngày 30: Tạo boss.py với phases cơ bản.
+  - Ngày 31: Thêm phase 1 cho Boss 1 (lao với thương).
+  - Ngày 32: Thêm phase 2-3 cho Boss (summon, tăng tốc).
+  - Ngày 33: Tạo resource.py cho thóc drops.
+  - Ngày 34: Tích hợp collect thóc với rủi ro (mất khi chết).
+  - Ngày 35: Tạo level_manager.py với wave spawning.
+  - Ngày 36: Thêm spawn points phá hủy được.
+  - Ngày 37: Quản lý level progression (5-10 waves/level).
+  - Ngày 38: Thêm boss every 5 levels.
+  - Ngày 39: Tạo maps (farm, forest, etc.) trong level_manager.
+  - Ngày 40: Tạo sound_manager.py để load sounds.
+  - Ngày 41: Thêm play music và SFX.
+  - Ngày 42: Tạo item_manager.py để load từ items.json.
+  - Ngày 43: Thêm equip items cho player.
+  - Ngày 44: Thêm synergies giữa items.
+  - Ngày 45: Tạo skills.py để load từ skills.json.
+  - Ngày 46: Thêm skill tree branches (melee, ranged, bomb).
+  - Ngày 47: Thêm random selection roguelite.
+  - Ngày 48: Tích hợp skills vào player.
+  - Ngày 49: Tạo main_menu.py với buttons.
+  - Ngày 50: Tích hợp main_menu vào game loop.
+  - Ngày 51-60: Tạo game_screen.py đầy đủ (tích hợp entities, managers).
+  - Ngày 61-70: Tạo safe_zone.py với shop, skills, missions.
+  - Ngày 71-80: Tạo game_over.py và state transitions.
+  - Ngày 81-90: Refine HUD trong hud.py (HP, energy, thóc).
+  - Ngày 91-100: Thêm effects (pixel art animations, lông văng).
+  - Ngày 101-110: Cải thiện AI độ khó (tăng dần, học pattern).
+  - Ngày 111-120: Thêm synergies và rarities cho items/skills.
+  - Ngày 121-130: Load assets (images, sounds) đầy đủ.
+  - Ngày 131-140: Thêm environments (backgrounds, obstacles).
+  - Ngày 141-150: Polish combat feel (hit feedback, sounds).
+  - Ngày 151-160: Thêm missions board và coop upgrades.
+  - Ngày 161-170: Optimize performance (FPS, collision).
+  - Ngày 171-180: Viết unit tests cho các module chính.
+  - Ngày 181-190: Debug toàn bộ, fix bugs từ gameplay.
+  - Ngày 191-195: Thêm New Game+ mode với skins.
+  - Ngày 196-198: Update README.md đầy đủ, add docs.
+  - Ngày 199: Build executable (pyinstaller nếu cần).
+  - Ngày 200: Release on GitHub, test final.
 
 #### Ghi chú tạm
 Bỏ main, base-entity, resource khỏi promt chỉnh sửa các file
