@@ -30,6 +30,8 @@ class Boss(Enemy):
         self.spear_damage = 40  # Sát thương thương
         self.spear_speed = 12  # Tốc độ spear proj
         self.spear_length = 100  # Range dài (extend hitbox hoặc proj size)
+        self.charge_cooldown_base = 3.0  # Cooldown charge base (giảm phase 2)
+        self.rage_mult = 1.5  # Tăng damage/speed phase 3
 
     def update(self, delta_time, player=None):
         """
@@ -48,22 +50,51 @@ class Boss(Enemy):
             self.speed *= 1.2  # Thêm tốc
             self.summon_minions(5)  # Summon cáo con
 
-        if player and self.attack_cooldown <= 0 and self.phase == 1:
-            # Phase 1: Lao với thương
+        if player and self.attack_cooldown <= 0:
             dx = player.rect.centerx - self.rect.centerx
             dy = player.rect.centery - self.rect.centery
             dist = math.hypot(dx, dy)
             if dist > 0:
                 base_dir = pygame.Vector2(dx / dist, dy / dist)
                 self.direction = base_dir
-                self.dash_duration = 1.0  # Dash 1s
-                self.attack_cooldown = 3.0  # Cooldown 3s
-                # Spawn spear proj dài hướng player
-                spear_rect = pygame.Rect(self.rect.centerx, self.rect.centery, self.spear_length, 10)
-                spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage,
-                                   self.spear_speed)
-                spear.rect = spear_rect  # Extend rect cho long spear
-                self.projectiles.append(spear)  # Reuse projectiles list từ Enemy
+
+                if self.phase == 1:
+                    # Phase 1: Base charge + spear
+                    self.dash_duration = 1.0
+                    spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage,
+                                       self.spear_speed)
+                    spear.rect.width = self.spear_length  # Long spear
+                    self.projectiles.append(spear)
+                    self.attack_cooldown = self.charge_cooldown_base
+
+                elif self.phase == 2:
+                    # Phase 2: Frequent charge (cooldown giảm), double spear
+                    self.dash_duration = 1.5  # Dash lâu hơn
+                    for i in [-0.1, 0.1]:  # Double spear spread
+                        offset_dir = base_dir.rotate(i * 30)  # Spread 30 độ
+                        spear = Projectile(self.rect.centerx, self.rect.centery, offset_dir, 'ranged',
+                                           self.spear_damage, self.spear_speed)
+                        spear.rect.width = self.spear_length
+                        self.projectiles.append(spear)
+                    self.attack_cooldown = self.charge_cooldown_base * 0.7  # Cooldown ngắn hơn
+
+                elif self.phase == 3:
+                    # Phase 3: Rage - tăng damage/speed, summon on charge
+                    self.dash_duration = 2.0
+                    self.spear_damage *= self.rage_mult
+                    spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage,
+                                       self.spear_speed * self.rage_mult)
+                    spear.rect.width = self.spear_length * 1.5
+                    self.projectiles.append(spear)
+                    self.summon_minions(2)  # Summon thêm mỗi charge
+                    self.attack_cooldown = self.charge_cooldown_base * 0.5  # Rất nhanh
+
+        # Update projectiles (thêm vào sau minions update)
+        for proj in self.projectiles[:]:
+            proj.update(delta_time)
+            proj.check_collision([player])
+            if not proj.alive:
+                self.projectiles.remove(proj)
 
         if self.attack_cooldown > 0:
             self.attack_cooldown -= delta_time
@@ -96,3 +127,6 @@ class Boss(Enemy):
         # Vẽ minions
         for minion in self.minions:
             minion.draw(screen)
+
+        for proj in self.projectiles:
+            proj.draw(screen)
