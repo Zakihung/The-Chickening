@@ -33,7 +33,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── projectile.py    `# Class Projectile (movement, explode, collision/damage handling)`
 - │   │   └── resource.py      `# Class Resource (thóc drops, collect, thoc_collected/stored, die lose 50% with drop)`
 - │   ├── managers/            `# Quản lý hệ thống`
-- │   │   ├── level_manager.py `# Quản lý waves, spawns, maps`
+- │   │   ├── level_manager.py `# Quản lý waves, spawns, levels từ json`
 - │   │   ├── sound_manager.py `# Quản lý nhạc và SFX`
 - │   │   └── item_manager.py  `# Quản lý items và synergies`
 - │   ├── screens/             `# Các màn hình/game states`
@@ -130,6 +130,11 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Draw: Circle vàng (sau load sprite).
   - Spawn: Sẽ gọi từ enemy/boss khi die.
 - Ngày 34: Tích hợp collect thóc với cơ chế rủi ro – thưởng (risk & reward). Player có thoc_collected (thóc nhặt giữa trận) và thoc_stored (thóc đã cất ở chuồng). Collect add to thoc_collected; khi die lose 50% thoc_collected (THOC_LOSS_ON_DEATH), drop remaining as Resource; quay về chuồng để store (thoc_stored += thoc_collected, reset collected).
+- Ngày 35: Tạo file level_manager.py trong modules/managers/ để quản lý waves spawning (load từ levels.json, spawn enemies theo wave/level, check clear wave khi destroy all spawns/enemies). Manager sẽ hold list enemies, update/spawn theo time/wave, và progress level khi clear (boss every 5).
+  - Load levels.json, select level data (waves, spawns as BaseEntity destructible).
+  - Update: Spawn enemies từ random spawn_point per wave, timer delay.
+  - Clear check: No enemies (sẽ add destroy all spawns sau).
+  - Draw: Spawn/enemies.
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
