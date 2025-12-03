@@ -28,7 +28,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   ├── entities/            `# Các thực thể trong game`
 - │   │   ├── base_entity.py   `# Class base cho entities (position, HP, update với di chuyển delta_time, draw với HP bar)`
 - │   │   ├── player.py        `# Class Player (movement input handling, flip sprite, dodge placeholder)`
-- │   │   ├── enemy.py         `# Class Enemy base (AI random, zig-zag cho 'runner', giữ khoảng cách/bắn tên cho 'archer', ném bom diện rộng cho 'bomber')`
+- │   │   ├── enemy.py         `# Class Enemy base (AI random, zig-zag cho 'runner', giữ khoảng cách/bắn tên cho 'archer', ném bom diện rộng cho 'bomber', giáp shield weak back cho 'shield')`
 - │   │   ├── boss.py          `# Class Boss (phases, special attacks)`
 - │   │   ├── projectile.py    `# Class Projectile (movement, explode, collision/damage handling)`
 - │   │   └── resource.py      `# Thóc và drops`
@@ -114,6 +114,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - Ngày 25: Thêm AI cho loại cáo chạy nhanh (type 'runner' - zig-zag áp sát) trong enemy.py. Chúng ta sẽ override update() để nếu có player target, enemy di chuyển zig-zag (lắc lư sin wave) hướng tới player, tốc độ nhanh (từ constants), và giữ distance ngắn để attack (cào vuốt placeholder).
 - Ngày 26: Thêm AI cho cáo cung thủ (type 'archer' - giữ khoảng cách, bắn tên) trong enemy.py. Chúng ta sẽ refine update() để enemy giữ khoảng cách an toàn (ví dụ: 200-300 pixels từ player), né khi player quá gần (di chuyển ngược direction), và bắn tên (spawn Projectile ranged hướng tới player với cooldown ngắn). Điều này dựa trên gameplay (cáo cung thủ: giữ khoảng cách, né khi gà đến gần, bắn tên - dùng Projectile class để arrow như lông của player).
 - Ngày 27: Thêm AI cho cáo ném bom (type 'bomber' - tấn công diện rộng) trong enemy.py. Chúng ta sẽ refine update() để enemy di chuyển ngẫu nhiên hoặc áp sát nhẹ, ném bom (spawn Projectile 'bomb' hướng tới player hoặc random) với cooldown, tạo vùng nguy hiểm AOE khi explode (dựa Projectile).
+- Ngày 28: Thêm AI cho cáo giáp (type 'shield' - khiên gỗ, chỉ lộ điểm yếu phía sau) trong enemy.py. Chúng ta sẽ refine update() để enemy quay mặt về player (khiên phía trước - giảm damage 80% nếu hit front), thỉnh thoảng quay lưng (expose back - damage full x2), và attack melee khi quay lưng hoặc gần.
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
