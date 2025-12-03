@@ -62,10 +62,11 @@ class BaseEntity:
             full_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 10, self.rect.width, 5)
             pygame.draw.rect(screen, COLOR_BLACK, full_bar_rect, 1)
 
-    def take_damage(self, damage):
+    def take_damage(self, damage, attacker_pos=None):
         """
-        Giảm HP khi trúng đòn.
+        Giảm HP khi trúng đòn. Support attacker_pos cho directional damage (e.g., shield).
         :param damage: Sát thương nhận
+        :param attacker_pos: Vị trí attacker (tuple x,y), optional
         """
         self.hp -= damage
         if self.hp < 0:

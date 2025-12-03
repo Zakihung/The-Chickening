@@ -9,7 +9,7 @@ class GameScreen:
         self.screen = screen
         self.background_color = COLOR_GREEN
         self.player = Player()
-        self.test_enemy = Enemy(600, 300, 'shield')  # Type 'shield'
+        self.test_enemy = Enemy(600, 300, 'mage')  # Type 'mage'
         self.player.enemies = [self.test_enemy]  # Giữ cho projectile hit enemy
 
     def update(self, delta_time, keys):

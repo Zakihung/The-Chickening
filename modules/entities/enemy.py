@@ -55,6 +55,31 @@ class Enemy(BaseEntity):
         self.shield_hp = 50  # HP riêng cho khiên (giảm khi hit front)
         self.shield_max_hp = 50
         self.facing_player = True  # Flag quay mặt player (shield front)
+        self.fire_cast_cooldown = 0  # Cooldown cast lửa (2s)
+        self.buff_cooldown = 0  # Cooldown buff (5s)
+        self.barrier_cooldown = 0  # Cooldown tạo vòng (4s)
+        self.fire_damage = 25  # Sát thương lửa
+        self.fire_speed = 7
+        self.buff_amount = 1.5  # Tăng speed/HP x1.5 temp 5s
+        self.buff_duration = 0  # Self buff timer
+        self.barrier_radius = 80  # Bán kính vòng cản
+        self.barrier_projectiles = []  # List barrier projs riêng (persistent)
+        self.allies = []  # List enemies để buff (placeholder, pass từ manager sau)
+
+    def take_damage(self, damage, attacker_pos=None):
+        """
+        Override: Giảm damage front, full back, damage shield nếu front.
+        """
+        if self.type == 'shield' and attacker_pos:
+            if self.is_back_hit(attacker_pos):
+                damage *= self.back_weak_mult
+            else:
+                damage *= self.front_resist_mult
+                self.shield_hp -= damage * 0.5  # Damage shield riêng
+                if self.shield_hp <= 0:
+                    self.shield_hp = 0
+                    print("Shield broken!")  # Optional effect
+        super().take_damage(damage)  # Gọi BaseEntity với pos (ignore ở base)
 
     def update(self, delta_time, player=None):
         """
@@ -173,6 +198,61 @@ class Enemy(BaseEntity):
 
                     self.speed = ENEMY_SPEED_BASE * 0.8  # Chậm hơn vì giáp nặng
 
+                elif self.type == 'mage':
+                    # Mage AI: Di chuyển chậm, cast lửa/buff/barrier theo cooldown
+                    if dist > 0:
+                        base_dir = pygame.Vector2(dx / dist, dy / dist)
+                        self.direction = base_dir * 0.5  # Áp sát chậm
+
+                    self.speed = ENEMY_SPEED_BASE * 0.6  # Chậm vì pháp sư
+
+                    # Cast lửa (ranged proj hướng player)
+                    if self.fire_cast_cooldown <= 0:
+                        fire = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.fire_damage,
+                                          self.fire_speed)
+                        self.projectiles.append(fire)
+                        self.fire_cast_cooldown = 2.0
+
+                    # Buff allies/self (tăng speed nếu buff_duration >0)
+                    if self.buff_duration > 0:
+                        self.speed *= self.buff_amount  # Self buff (sẽ apply allies sau)
+                        self.buff_duration -= delta_time
+                    if self.buff_cooldown <= 0:
+                        self.buff_duration = 5.0  # Buff 5s
+                        self.buff_cooldown = 10.0  # Cooldown 10s
+                        # TODO: Loop allies: ally.speed *= buff_amount; ally.buff_timer = 5
+
+                    # Tạo vòng cản (8 projs quanh self)
+                    if self.barrier_cooldown <= 0:
+                        for i in range(8):
+                            angle = (i / 8) * 2 * math.pi
+                            barrier_dir = pygame.Vector2(math.cos(angle), math.sin(angle))
+                            barrier_pos = self.rect.center + barrier_dir * self.barrier_radius
+                            barrier = Projectile(barrier_pos[0], barrier_pos[1], pygame.Vector2(0, 0), 'ranged', 15,
+                                                 0)  # Speed 0 = stationary
+                            barrier.aoe_radius = 20  # Small damage circle
+                            self.barrier_projectiles.append(barrier)
+                        self.barrier_cooldown = 8.0  # Cooldown 8s
+
+                    # Update barrier projs (persistent 5s each)
+                    for barrier in self.barrier_projectiles[:]:
+                        barrier.update(delta_time)
+                        barrier.check_collision([player])  # Damage player chạm
+                        if not barrier.alive:  # Set alive=False sau 5s trong Projectile?
+                            self.barrier_projectiles.remove(barrier)
+
+                    # Update cooldowns
+                    self.fire_cast_cooldown = max(0, self.fire_cast_cooldown - delta_time)
+                    self.buff_cooldown = max(0, self.buff_cooldown - delta_time)
+                    self.barrier_cooldown = max(0, self.barrier_cooldown - delta_time)
+
+                    # Update main projectiles (lửa)
+                    for proj in self.projectiles[:]:
+                        proj.update(delta_time)
+                        proj.check_collision([player])
+                        if not proj.alive:
+                            self.projectiles.remove(proj)
+
                 else:
                     # Fallback random cho type khác
                     self.direction_change_timer -= delta_time
@@ -197,21 +277,6 @@ class Enemy(BaseEntity):
         if not self.alive:
             if random.random() < DROP_THO_RATE:
                 print("Dropped thóc!")  # TODO: Tạo resource.py drop
-
-    def take_damage(self, damage, attacker_pos=None):
-        """
-        Override: Giảm damage front, full back, damage shield nếu front.
-        """
-        if self.type == 'shield' and attacker_pos:
-            if self.is_back_hit(attacker_pos):
-                damage *= self.back_weak_mult
-            else:
-                damage *= self.front_resist_mult
-                self.shield_hp -= damage * 0.5  # Damage shield riêng
-                if self.shield_hp <= 0:
-                    self.shield_hp = 0
-                    # Break shield: Full damage sau
-        super().take_damage(damage)
 
     def is_back_hit(self, attacker_pos):
         """
@@ -238,3 +303,7 @@ class Enemy(BaseEntity):
         # Vẽ projectiles của enemy
         for proj in self.projectiles:
             proj.draw(screen)
+
+        # Vẽ barrier riêng (color tím)
+        for barrier in self.barrier_projectiles:
+            barrier.draw(screen)
