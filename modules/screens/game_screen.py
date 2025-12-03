@@ -6,6 +6,7 @@ import json
 from modules.utils.constants import ASSETS_PATH  # Nếu cần, nhưng chưa dùng
 from modules.entities.base_entity import BaseEntity
 from modules.entities.player import Player
+from modules.entities.enemy import Enemy
 
 class GameScreen:
     def __init__(self, screen):
@@ -16,7 +17,8 @@ class GameScreen:
         self.chicken_rect = self.chicken_sprite.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))  # Vị trí giữa màn
         self.player = Player()
         self.test_enemy = BaseEntity(600, 300, 50, 50, hp=50, speed=0)  # Enemy tĩnh để test hit
-        self.player.enemies = [self.test_enemy]  # Pass vào player placeholder
+        self.test_enemy = Enemy(600, 300, 'runner')  # Spawn enemy
+        self.player.enemies = [self.test_enemy]  # Giữ để projectile hit
 
     def draw_background(self):
         self.screen.fill(self.background_color)
@@ -41,7 +43,7 @@ class GameScreen:
         keys = pygame.key.get_pressed()
         self.player.update(delta_time, keys)
         self.player.draw(self.screen)
-        self.test_enemy.update(delta_time)
+        self.test_enemy.update(delta_time, self.player)
         self.test_enemy.draw(self.screen)
         # Test damage chỉ nếu không invincible
         if not self.player.invincible:
