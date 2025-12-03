@@ -3,7 +3,8 @@ import pygame
 from modules.entities.base_entity import BaseEntity
 from modules.utils.constants import (
     PLAYER_HP_DEFAULT, PLAYER_SPEED_DEFAULT, EGGNERGY_MAX, DODGE_COOLDOWN,
-    SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, COLOR_BLACK, COLOR_RED, MELEE_RANGE, PLAYER_DAMAGE_DEFAULT, RANGED_RANGE,
+    SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, COLOR_BLACK, COLOR_RED, COLOR_BLUE,
+    MELEE_RANGE, PLAYER_DAMAGE_DEFAULT, RANGED_RANGE, BOMB_DAMAGE, BOMB_AOE_RADIUS, BOMB_LIMIT
 )
 
 class Player(BaseEntity):
@@ -51,6 +52,12 @@ class Player(BaseEntity):
         self.ranged_cost = 10  # Eggnergy consume mỗi shot
         self.ranged_damage = 15  # Sát thương trung bình
         self.projectiles = []  # List placeholder cho projectiles (dict với position, direction)
+        self.bomb_cooldown = 0  # Cooldown đẻ bomb (seconds, ví dụ 1s)
+        self.bomb_max = BOMB_LIMIT  # Limit max từ constants (3)
+        self.bomb_current = self.bomb_max  # Số bomb hiện có
+        self.bombs = []  # List placeholder cho bombs (dict với rect, timer explode, exploded flag)
+        self.bomb_damage = BOMB_DAMAGE  # Sát thương cao
+        self.bomb_explode_delay = 2  # 2s delay trước explode
 
     def update(self, delta_time, keys):
         """
@@ -136,6 +143,38 @@ class Player(BaseEntity):
                     not (0 < proj['rect'].centerx < SCREEN_WIDTH and 0 < proj['rect'].centery < SCREEN_HEIGHT):
                 self.projectiles.remove(proj)
 
+        # Bomb attack logic (key L)
+        if keys[pygame.K_l] and self.bomb_cooldown <= 0 and self.bomb_current > 0:
+            # Đẻ bomb tại vị trí player (hoặc ném nhẹ theo direction)
+            self.bomb_cooldown = 1.0  # 1s cooldown
+            self.bomb_current -= 1
+            bomb_rect = pygame.Rect(self.rect.centerx - 25, self.rect.centery - 25, 50, 50)  # Bomb rect
+            if self.direction.length() > 0:
+                # Ném nhẹ: Di chuyển ban đầu theo hướng
+                throw_offset = self.direction.normalize() * 50  # Ném 50 pixels
+                bomb_rect.move_ip(throw_offset.x, throw_offset.y)
+            self.bombs.append({'rect': bomb_rect, 'timer': self.bomb_explode_delay, 'exploded': False})
+            # TODO: Tích hợp projectile.py sau cho movement/explode, check AOE damage
+
+        # Update cooldown
+        if self.bomb_cooldown > 0:
+            self.bomb_cooldown -= delta_time
+
+        # Update bombs placeholder (countdown timer, explode khi =0)
+        for bomb in self.bombs[:]:
+            bomb['timer'] -= delta_time
+            if bomb['timer'] <= 0 and not bomb['exploded']:
+                bomb['exploded'] = True
+                # Explode logic: Tạo AOE circle, apply damage trong radius (placeholder)
+                # TODO: Check entities trong BOMB_AOE_RADIUS và damage
+                # Remove sau explode (hoặc delay để vẽ effect)
+                self.bombs.remove(bomb)
+                # Regen bomb_current placeholder (ví dụ: regen chậm)
+            # Placeholder regen bomb_current (tăng 1 mỗi 10s, max limit)
+        if len(self.bombs) < self.bomb_max:
+            # Regen logic đơn giản (sẽ refine sau)
+            pass
+
         # Update timers
         if self.melee_duration > 0:
             self.melee_duration -= delta_time
@@ -165,6 +204,14 @@ class Player(BaseEntity):
         # Vẽ projectiles placeholder (vòng tròn vàng)
         for proj in self.projectiles:
             pygame.draw.circle(screen, COLOR_YELLOW, proj['rect'].center, 5)
+
+        # Vẽ bombs placeholder (hình vuông đỏ, circle xanh khi explode)
+        for bomb in self.bombs:
+            if not bomb['exploded']:
+                pygame.draw.rect(screen, COLOR_RED, bomb['rect'])
+            else:
+                # Vẽ AOE explode (placeholder)
+                pygame.draw.circle(screen, COLOR_BLUE, bomb['rect'].center, BOMB_AOE_RADIUS, 2)
 
         # Vẽ eggnergy bar (giữ nguyên)
         energy_ratio = self.eggnergy / EGGNERGY_MAX

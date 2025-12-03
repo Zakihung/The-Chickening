@@ -35,6 +35,7 @@ class GameScreen:
         self.player.update(delta_time, keys)
         self.player.draw(self.screen)
         self.player.take_damage(0.1)  # Test giảm HP chậm để thấy bar
+
         keys = pygame.key.get_pressed()
         self.player.update(delta_time, keys)
         self.player.draw(self.screen)
