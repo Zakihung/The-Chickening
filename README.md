@@ -99,6 +99,11 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - Ngày 19: Thêm melee attack (mổ tầm gần) cho player trong player.py. Đây là tấn công chính đầu tiên: Tốc độ nhanh, sát thương thấp, tạo hitbox phía trước player theo hướng (dựa direction), check collision với enemies (placeholder, vì enemy chưa có). Sử dụng input key (ví dụ: 'J' cho melee), với animation ngắn (placeholder tint hoặc delay), và damage từ constants.
 - Ngày 20: Thêm ranged attack (bắn lông tầm xa) với eggnergy cho player trong player.py. Đây là tấn công thứ hai: Dùng năng lượng eggnergy (consume mỗi lần bắn), sát thương trung bình, tạo projectile bay theo hướng (placeholder vẽ line hoặc rect tạm, vì projectile.py sẽ ở Ngày 22).
 - Ngày 21: Thêm bomb attack (đẻ trứng nổ) với limit cho player trong player.py. Đây là tấn công thứ ba: Sát thương cao, hạn chế số lượng (BOMB_LIMIT từ constants), tạo bomb tại vị trí player (hoặc ném theo hướng), explode sau delay hoặc collision, tạo AOE (area of effect) với BOMB_AOE_RADIUS. Sử dụng input key (ví dụ: 'L' cho bomb), check bomb_count > 0 mới đẻ, và regen limit theo thời gian hoặc collect (placeholder).
+- Ngày 22: Tạo file projectile.py trong modules/entities/ để định nghĩa class Projectile kế thừa BaseEntity. Class này sẽ xử lý chung cho tất cả đạn: lông (ranged - bay thẳng), trứng (bomb - bay nhẹ rồi explode AOE). Điều này refactor placeholder dict trong player.py thành instances thực, dễ quản lý collision/damage/AI sau. Projectile có type ('ranged' hoặc 'bomb'), di chuyển theo direction, explode cho bomb, và remove khi out screen hoặc explode.
+  - Kế thừa BaseEntity: Reuse movement (direction, speed, clamp - nhưng override clamp để không clamp projectile).
+  - Type-specific: Ranged bay mãi đến out screen; Bomb countdown explode, vẽ AOE.
+  - Placeholder draw: Circle màu theo type.
+  - Sau: Load image từ assets, collision với enemies.
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
