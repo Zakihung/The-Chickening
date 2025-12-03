@@ -96,8 +96,10 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Thêm regen eggnergy theo thời gian (placeholder cho balance).
   - Tích Hợp Delta_Time Thực Trong game_screen.py Và main.py
 - Ngày 18: Thêm dodge roll đầy đủ cho player với cooldown trong player.py. Chúng ta sẽ implement logic dodge: Khi nhấn SPACE (nếu cooldown hết), lăn né theo hướng hiện tại (tăng speed tạm thời, invincible trong duration ngắn), set cooldown để tránh spam, và reset sau.
+- Ngày 19: Thêm melee attack (mổ tầm gần) cho player trong player.py. Đây là tấn công chính đầu tiên: Tốc độ nhanh, sát thương thấp, tạo hitbox phía trước player theo hướng (dựa direction), check collision với enemies (placeholder, vì enemy chưa có). Sử dụng input key (ví dụ: 'J' cho melee), với animation ngắn (placeholder tint hoặc delay), và damage từ constants.
 
-Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
+
+- Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
 ## Kế hoạch dự án (dự kiến)
 - Kế hoạch bao gồm:
