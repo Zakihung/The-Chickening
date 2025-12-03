@@ -3,8 +3,9 @@ import pygame
 from modules.entities.base_entity import BaseEntity
 from modules.utils.constants import (
     PLAYER_HP_DEFAULT, PLAYER_SPEED_DEFAULT, EGGNERGY_MAX, DODGE_COOLDOWN,
-    SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, COLOR_BLACK
+    SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, COLOR_BLACK, COLOR_RED
 )
+from modules.utils.constants import MELEE_RANGE, PLAYER_DAMAGE_DEFAULT
 
 class Player(BaseEntity):
     def __init__(self):
@@ -43,6 +44,10 @@ class Player(BaseEntity):
         self.dodge_speed_multiplier = 2  # Tăng speed gấp 2 khi dodge
         self.dodge_duration = 0  # Timer duration (seconds)
         self.dodge_cooldown_timer = 0  # Timer cooldown (seconds)
+        self.melee_cooldown = 0  # Cooldown attack (seconds, ví dụ 0.5s để tránh spam)
+        self.melee_duration = 0  # Duration active hitbox (short, 0.2s)
+        self.melee_damage = PLAYER_DAMAGE_DEFAULT  # Sát thương từ constants
+        self.melee_hitbox = None  # Rect cho hitbox attack
 
     def update(self, delta_time, keys):
         """
@@ -79,14 +84,28 @@ class Player(BaseEntity):
                 self.invincible = True
                 self.speed *= self.dodge_speed_multiplier  # Tăng speed
 
-        # Update timers với delta_time
-        if self.dodge_duration > 0:
-            self.dodge_duration -= delta_time
-            if self.dodge_duration <= 0:
-                self.invincible = False
-                self.speed /= self.dodge_speed_multiplier  # Reset speed
-        if self.dodge_cooldown_timer > 0:
-            self.dodge_cooldown_timer -= delta_time
+        # Melee attack logic (key J)
+        if keys[pygame.K_j] and self.melee_cooldown <= 0 and self.melee_duration <= 0:
+            # Bắt đầu melee nếu có direction
+            if self.direction.length() > 0:
+                self.melee_duration = 0.2  # 0.2s active
+                self.melee_cooldown = 0.5  # 0.5s cooldown
+                # Tạo hitbox phía trước theo direction
+                hitbox_offset = self.direction * MELEE_RANGE
+                self.melee_hitbox = pygame.Rect(
+                    self.rect.centerx + hitbox_offset.x - 25,
+                    self.rect.centery + hitbox_offset.y - 25,
+                    50, 50  # Kích thước hitbox nhỏ
+                )
+                # TODO: Check collision với enemies và apply damage (khi có enemy)
+
+        # Update timers
+        if self.melee_duration > 0:
+            self.melee_duration -= delta_time
+            if self.melee_duration <= 0:
+                self.melee_hitbox = None
+        if self.melee_cooldown > 0:
+            self.melee_cooldown -= delta_time
 
         # Regen eggnergy placeholder
         self.eggnergy = min(self.eggnergy + 10 * delta_time, EGGNERGY_MAX)
@@ -102,6 +121,9 @@ class Player(BaseEntity):
             screen.blit(tint_surface, self.rect.topleft)
         else:
             super().draw(screen)  # Bình thường
+
+        if self.melee_hitbox:
+            pygame.draw.rect(screen, COLOR_RED, self.melee_hitbox, 2)
 
         # Vẽ eggnergy bar (giữ nguyên)
         energy_ratio = self.eggnergy / EGGNERGY_MAX
