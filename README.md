@@ -33,7 +33,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── projectile.py    `# Class Projectile (movement, explode, collision/damage handling)`
 - │   │   └── resource.py      `# Class Resource (thóc drops, collect, thoc_collected/stored, die lose 50% with drop)`
 - │   ├── managers/            `# Quản lý hệ thống`
-- │   │   ├── level_manager.py `# Quản lý waves, spawns, levels từ json`
+- │   │   ├── level_manager.py `# Quản lý waves, spawns, levels từ json, level progression, boss every 5`
 - │   │   ├── sound_manager.py `# Quản lý nhạc và SFX`
 - │   │   └── item_manager.py  `# Quản lý items và synergies`
 - │   ├── screens/             `# Các màn hình/game states`
@@ -136,6 +136,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Clear check: No enemies (sẽ add destroy all spawns sau).
   - Draw: Spawn/enemies.
 - Ngày 36: Thêm spawn points phá hủy được trong level_manager.py (spawn_points là BaseEntity với HP, destroy khi hit projectile/melee, progress level khi all spawns destroyed + no enemies).
+- Ngày 37: Quản lý level progression trong level_manager.py (5-10 waves/level từ WAVE_COUNT_PER_LEVEL, auto next level khi clear, boss every 5 levels spawn Boss thay waves, update progression (current_level tăng, load next json)).
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
