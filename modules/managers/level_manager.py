@@ -24,12 +24,15 @@ class LevelManager:
 
     def load_level(self, level_id):
         """Load data level từ json."""
-        level = next((l for l in self.levels_data if l['id'] == level_id + 1), None)  # id 1 = index 0
+        level = next((l for l in self.levels_data if l['id'] == level_id + 1), None)
         if level:
             self.map_type = level['map_type']
             self.background = level['background']
             self.waves = level['waves']
-            self.spawn_points = [BaseEntity(sp['x'], sp['y'], 30, 30, hp=sp['hp']) for sp in level['spawn_points']]
+            self.spawn_points = []
+            for sp in level['spawn_points']:
+                spawn = BaseEntity(sp['x'], sp['y'], 40, 40, hp=sp['hp'])
+                self.spawn_points.append(spawn)
             self.boss = level['boss']  # None hoặc dict
             self.current_wave = 0
             self.enemies.clear()
@@ -54,10 +57,27 @@ class LevelManager:
             if not enemy.alive:
                 self.enemies.remove(enemy)
 
+        # Update spawns (check destroy)
+        for spawn in self.spawn_points[:]:
+            # Placeholder hit: Check collision với player projectiles (pass từ player)
+            for proj in player.projectiles:
+                if rect_collision(proj.rect, spawn.rect):
+                    spawn.take_damage(proj.damage)
+                    if spawn.hp <= 0:
+                        self.spawn_points.remove(spawn)
+                        # Effect/explosion placeholder
+
         # Check clear wave: No enemies and all spawns destroyed? (placeholder no enemies)
         if len(self.enemies) == 0 and self.current_wave >= len(self.waves):
             # Clear level, next or boss
             pass
+
+        # Check clear level: No enemies và no spawn_points
+        if len(self.enemies) == 0 and len(self.spawn_points) == 0 and self.current_wave >= len(self.waves):
+            # Clear, next level or boss
+            self.current_level += 1
+            self.load_level(self.current_level)
+            print("Level cleared!")  # Placeholder
 
     def draw(self, screen):
         """Draw enemies/spawns."""
