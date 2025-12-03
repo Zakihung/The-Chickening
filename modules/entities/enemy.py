@@ -4,7 +4,7 @@ import pygame
 import random
 from modules.entities.base_entity import BaseEntity
 from modules.utils.constants import (
-    ENEMY_HP_BASE, ENEMY_SPEED_BASE, COLOR_RED, DROP_THO_RATE, SCREEN_WIDTH, SCREEN_HEIGHT
+    ENEMY_HP_BASE, ENEMY_SPEED_BASE, COLOR_RED, DROP_THO_RATE, BOMB_AOE_RADIUS
 )
 from modules.utils.helpers import rect_collision  # Để collision sau
 from modules.entities.projectile import Projectile  # Để spawn arrow
@@ -42,6 +42,11 @@ class Enemy(BaseEntity):
         self.arrow_damage = 20  # Sát thương tên
         self.arrow_speed = 8  # Tốc độ tên
         self.projectiles = []  # List Projectile cho arrows của enemy (tương tự player)
+        self.bomb_throw_cooldown = 0  # Cooldown ném bom (seconds, ví dụ 2.5s)
+        self.bomb_damage = 30  # Sát thương bom (cao hơn arrow)
+        self.bomb_speed = 4  # Tốc độ ném bom (chậm hơn arrow)
+        self.bomb_throw_range_min = 200  # Min dist để ném
+        self.bomb_throw_range_max = 400  # Max dist để ném
 
     def update(self, delta_time, player=None):
         """
@@ -101,6 +106,37 @@ class Enemy(BaseEntity):
                     for proj in self.projectiles[:]:
                         proj.update(delta_time)
                         proj.check_collision([player])  # Check hit player (pass list [player])
+                        if not proj.alive:
+                            self.projectiles.remove(proj)
+
+                elif self.type == 'bomber':
+                    # Bomber AI: Di chuyển để vào range ném, ném bom theo hướng player với cooldown
+                    if dist > 0:
+                        if dist > self.bomb_throw_range_max:
+                            # Áp sát để vào range
+                            self.direction = base_dir
+                        elif dist < self.bomb_throw_range_min:
+                            # Né nhẹ nếu quá gần
+                            self.direction = -base_dir * 0.5  # Né chậm
+                        else:
+                            # Trong range: Dừng hoặc di chuyển ngẫu nhiên nhẹ, ném bom
+                            self.direction = pygame.Vector2(0, 0)  # Dừng để ném
+                            if self.bomb_throw_cooldown <= 0:
+                                # Ném bom hướng tới player
+                                bomb_dir = base_dir
+                                bomb = Projectile(self.rect.centerx, self.rect.centery, bomb_dir, 'bomb',
+                                                  self.bomb_damage, self.bomb_speed, BOMB_AOE_RADIUS)
+                                self.projectiles.append(bomb)
+                                self.bomb_throw_cooldown = 2.5  # Reset cooldown
+
+                    # Update cooldown
+                    if self.bomb_throw_cooldown > 0:
+                        self.bomb_throw_cooldown -= delta_time
+
+                    # Update projectiles (đã có từ archer, reuse cho bomber)
+                    for proj in self.projectiles[:]:
+                        proj.update(delta_time)
+                        proj.check_collision([player])  # Check AOE damage player
                         if not proj.alive:
                             self.projectiles.remove(proj)
 
