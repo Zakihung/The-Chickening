@@ -5,6 +5,7 @@ from modules.entities.player import Player
 from modules.managers.level_manager import LevelManager
 from modules.managers.sound_manager import SoundManager
 from modules.managers.item_manager import ItemManager
+from modules.skills import Skills
 
 class GameScreen:
     def __init__(self, screen):
@@ -20,6 +21,12 @@ class GameScreen:
         self.item_manager = ItemManager()
         # Test equip
         self.item_manager.equip_item(self.player, 1)  # Test equip id1
+        self.skills = Skills()
+        # Test random and apply
+        random_skills = self.skills.get_random_skills('melee', 3)
+        if random_skills:
+            test_id = random_skills[0]['id']
+            self.skills.apply_skill(self.player, test_id)
 
     def update(self, delta_time, keys):
         """Update entities với delta_time và keys."""

@@ -63,6 +63,9 @@ class Player(BaseEntity):
         self.base_speed = PLAYER_SPEED_DEFAULT  # Etc for reverse
         self.burn_damage = 0  # For synergy
         # Add more for effects
+        self.unlocked_skills = []  # List skill ids
+        self.crit_rate = 0.0  # For ranged crit
+        # Add more: pierce = False, stun_chance = 0
 
     def update(self, delta_time, keys):
         """
