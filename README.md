@@ -31,7 +31,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── enemy.py         `# Class Enemy base (AI random, zig-zag cho 'runner', giữ khoảng cách/bắn tên cho 'archer', ném bom diện rộng cho 'bomber', giáp shield weak back cho 'shield', pháp sư buff/barrier cho 'mage')`
 - │   │   ├── boss.py          `# Class Boss (phases đầy đủ cho Boss1: spear charge, frequent double, rage summon)`
 - │   │   ├── projectile.py    `# Class Projectile (movement, explode, collision/damage handling)`
-- │   │   └── resource.py      `# Thóc và drops`
+- │   │   └── resource.py      `# Class Resource (thóc drops, collect)`
 - │   ├── managers/            `# Quản lý hệ thống`
 - │   │   ├── level_manager.py `# Quản lý waves, spawns, maps`
 - │   │   ├── sound_manager.py `# Quản lý nhạc và SFX`
@@ -124,7 +124,11 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Placeholder spear: Có thể spawn Projectile dài.
 - Ngày 31: Thêm phase 1 chi tiết cho Boss 1 ('Cáo Đại Tướng') trong boss.py - lao với thương dài (dash nhanh về player với spear projectile dài hoặc extended melee, damage cao trong range dài). Phase 1 là base: Charge cooldown 3s, tăng speed dash 2x trong 1s, spawn spear (Projectile ranged dài, fast). Điều này dựa trên gameplay (Boss 1: Dùng cây thương dài + lao về phía gà).
 - Ngày 32: Thêm phase 2-3 cho Boss trong boss.py (tăng tốc, dùng skill mới như summon minions sau 50% HP, và thêm attacks mới ở phase 3). Chúng ta sẽ refine update() để override phase-specific AI (phase 2: tăng speed + frequent charge, phase 3: summon + new skill như speed boost/rage mode).
-
+- Ngày 33: Tạo file resource.py trong modules/entities/ để định nghĩa class Resource cho thóc drops (rơi từ enemies/boss khi chết, hoặc từ hũ/bụi rậm). Resource sẽ kế thừa BaseEntity (position, draw simple), collect khi player chạm (tăng thóc count, risk lose on death), và spawn random vị trí near enemy chết.
+  - Kế thừa BaseEntity: Reuse position, update/draw.
+  - Update: Collide player thì add amount to player.thoc (thêm player.thoc = 0 trong player.py), remove self.
+  - Draw: Circle vàng (sau load sprite).
+  - Spawn: Sẽ gọi từ enemy/boss khi die.
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
