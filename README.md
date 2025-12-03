@@ -29,7 +29,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── base_entity.py   `# Class base cho entities (position, HP, update với di chuyển delta_time, draw với HP bar)`
 - │   │   ├── player.py        `# Class Player (movement input handling, flip sprite, dodge placeholder)`
 - │   │   ├── enemy.py         `# Class Enemy base (AI random, zig-zag cho 'runner', giữ khoảng cách/bắn tên cho 'archer', ném bom diện rộng cho 'bomber', giáp shield weak back cho 'shield', pháp sư buff/barrier cho 'mage')`
-- │   │   ├── boss.py          `# Class Boss (kế thừa Enemy, phases, summon minions)`
+- │   │   ├── boss.py          `# Class Boss (phases, summon, phase 1 spear charge cho Boss1)`
 - │   │   ├── projectile.py    `# Class Projectile (movement, explode, collision/damage handling)`
 - │   │   └── resource.py      `# Thóc và drops`
 - │   ├── managers/            `# Quản lý hệ thống`
@@ -122,6 +122,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - AI Boss1: Charge direction player cooldown 3s (tăng speed temp).
   - Summon: Spawn Enemy 'runner' con yếu (HP/2), update/draw như projectiles.
   - Placeholder spear: Có thể spawn Projectile dài.
+- Ngày 31: Thêm phase 1 chi tiết cho Boss 1 ('Cáo Đại Tướng') trong boss.py - lao với thương dài (dash nhanh về player với spear projectile dài hoặc extended melee, damage cao trong range dài). Phase 1 là base: Charge cooldown 3s, tăng speed dash 2x trong 1s, spawn spear (Projectile ranged dài, fast). Điều này dựa trên gameplay (Boss 1: Dùng cây thương dài + lao về phía gà).
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
