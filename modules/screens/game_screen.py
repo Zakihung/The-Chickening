@@ -22,11 +22,13 @@ class GameScreen:
         # Test equip
         self.item_manager.equip_item(self.player, 1)  # Test equip id1
         self.skills = Skills()
-        # Test random and apply
-        random_skills = self.skills.get_random_skills('melee', 3)
-        if random_skills:
-            test_id = random_skills[0]['id']
-            self.skills.apply_skill(self.player, test_id)
+        # Test choose branch and multiple upgrades
+        self.skills.choose_branch(self.player, 'melee')
+        for _ in range(3):  # 3 upgrades
+            random_skills = self.skills.get_random_skills(self.player.branch, 3)
+            if random_skills:
+                test_id = random_skills[0]['id']
+                self.skills.apply_skill(self.player, test_id)
 
     def update(self, delta_time, keys):
         """Update entities với delta_time và keys."""

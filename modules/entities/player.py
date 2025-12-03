@@ -66,6 +66,11 @@ class Player(BaseEntity):
         self.unlocked_skills = []  # List skill ids
         self.crit_rate = 0.0  # For ranged crit
         # Add more: pierce = False, stun_chance = 0
+        self.branch = None  # Chosen branch
+        self.armor_mult = 1.0
+        self.ranged_pierce = 0
+        self.bomb_aoe_radius = BOMB_AOE_RADIUS
+        self.bomb_stun = 0.0
 
     def update(self, delta_time, keys):
         """
