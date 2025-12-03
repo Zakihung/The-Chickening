@@ -17,8 +17,8 @@ class GameScreen:
         self.chicken_rect = self.chicken_sprite.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))  # Vị trí giữa màn
         self.player = Player()
         self.test_enemy = BaseEntity(600, 300, 50, 50, hp=50, speed=0)  # Enemy tĩnh để test hit
-        self.test_enemy = Enemy(600, 300, 'runner')  # Spawn enemy
-        self.player.enemies = [self.test_enemy]  # Giữ để projectile hit
+        self.test_enemy = Enemy(600, 300, 'runner')  # Type 'runner' để test zig-zag
+        self.player.enemies = [self.test_enemy]  # Giữ cho projectile hit
 
     def draw_background(self):
         self.screen.fill(self.background_color)
