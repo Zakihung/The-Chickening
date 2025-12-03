@@ -61,6 +61,7 @@ class Player(BaseEntity):
         self.equipped_slots = {'weapon': None, 'armor': None, 'accessory': None, 'boots': None}  # Slots per type
         self.base_melee_damage = PLAYER_DAMAGE_DEFAULT  # Base to reverse
         self.base_speed = PLAYER_SPEED_DEFAULT  # Etc for reverse
+        self.burn_damage = 0  # For synergy
         # Add more for effects
 
     def update(self, delta_time, keys):

@@ -34,15 +34,20 @@ class ItemManager:
             self.apply_effects(player, item['effects'], add=True)
             self.check_synergies(player)
 
+    def remove_synergies(self, player):
+        """Reset all synergy effects."""
+        player.burn_damage = 0
+        # Add more reset for other synergies (e.g., player.extra_speed = 0)
+
     def unequip_item(self, player, item_id):
-        """Unequip, reverse effects."""
         item = self.get_item_by_id(item_id)
         if item:
             player.equipped_items.remove(item_id)
             type = item['type']
             player.equipped_slots[type] = None
             self.apply_effects(player, item['effects'], add=False)
-            self.check_synergies(player)
+            self.remove_synergies(player)  # Reset synergies
+            self.check_synergies(player)  # Reapply remaining
 
     def apply_effects(self, player, effects, add=True):
         """Apply/remove effects to player attrs."""
@@ -57,13 +62,17 @@ class ItemManager:
 
     def check_synergies(self, player):
         """Check combo, apply extra."""
-        # Reset synergy effects first (placeholder reset burn_damage=0)
-        player.burn_damage = 0
+        self.remove_synergies(player)  # Reset first
         equipped = player.equipped_items
+        applied = set()  # Avoid duplicate apply
         for item_id in equipped:
             item = self.get_item_by_id(item_id)
             for syn in item['synergies']:
-                if syn['with_item_id'] in equipped:
+                if syn['with_item_id'] in equipped and (item_id, syn['with_item_id']) not in applied:
+                    applied.add((item_id, syn['with_item_id']))
+                    applied.add((syn['with_item_id'], item_id))  # Symmetric
                     if syn['effect'] == 'Tăng cháy lâu hơn':
                         player.burn_damage += 5
-                    # Add more
+                    elif syn['effect'] == 'Cháy mạnh hơn với xăng':
+                        player.bomb_damage += 10  # Placeholder
+                    # Add more synergies from json (e.g., 'Tăng tốc + tạo sát thương khi lăn né' = dodge_damage +10)
