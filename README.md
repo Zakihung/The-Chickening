@@ -29,7 +29,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── base_entity.py   `# Class base cho entities (position, HP, update với di chuyển delta_time, draw với HP bar)`
 - │   │   ├── player.py        `# Class Player (movement input handling, flip sprite, dodge placeholder)`
 - │   │   ├── enemy.py         `# Class Enemy base (AI random, zig-zag cho 'runner', giữ khoảng cách/bắn tên cho 'archer', ném bom diện rộng cho 'bomber', giáp shield weak back cho 'shield', pháp sư buff/barrier cho 'mage')`
-- │   │   ├── boss.py          `# Class Boss (phases, special attacks)`
+- │   │   ├── boss.py          `# Class Boss (kế thừa Enemy, phases, summon minions)`
 - │   │   ├── projectile.py    `# Class Projectile (movement, explode, collision/damage handling)`
 - │   │   └── resource.py      `# Thóc và drops`
 - │   ├── managers/            `# Quản lý hệ thống`
@@ -116,6 +116,12 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - Ngày 27: Thêm AI cho cáo ném bom (type 'bomber' - tấn công diện rộng) trong enemy.py. Chúng ta sẽ refine update() để enemy di chuyển ngẫu nhiên hoặc áp sát nhẹ, ném bom (spawn Projectile 'bomb' hướng tới player hoặc random) với cooldown, tạo vùng nguy hiểm AOE khi explode (dựa Projectile).
 - Ngày 28: Thêm AI cho cáo giáp (type 'shield' - khiên gỗ, chỉ lộ điểm yếu phía sau) trong enemy.py. Chúng ta sẽ refine update() để enemy quay mặt về player (khiên phía trước - giảm damage 80% nếu hit front), thỉnh thoảng quay lưng (expose back - damage full x2), và attack melee khi quay lưng hoặc gần.
 - Ngày 29: Thêm AI cho cáo pháp sư (type 'mage' - lửa + triệu hồi, buff đồng đội, tạo vòng cản đường) trong enemy.py. Chúng ta sẽ refine update() để enemy cast lửa (spawn Projectile 'ranged' lửa hướng player), buff nearby enemies (tăng speed/HP temp nếu có list), và tạo vòng cản (spawn 8 projectiles vòng tròn quanh self làm barrier - damage/slow player nếu chạm).
+- Ngày 30: Tạo file boss.py trong modules/entities/ để định nghĩa class Boss kế thừa Enemy (hoặc BaseEntity), với phases cơ bản (3 pha: base, tăng tốc/skill mới khi <50% HP, summon minions khi <20%). Đây là foundation cho trùm (mỗi 5 level), ví dụ Boss 1 'Cáo Đại Tướng' (lao thương, summon cáo con). Boss sẽ có HP cao, size lớn, và transition phases (change AI/attacks).
+  - Kế thừa Enemy: Reuse AI base, collision, drop.
+  - Phases: Check hp_ratio change phase (tăng speed, summon).
+  - AI Boss1: Charge direction player cooldown 3s (tăng speed temp).
+  - Summon: Spawn Enemy 'runner' con yếu (HP/2), update/draw như projectiles.
+  - Placeholder spear: Có thể spawn Projectile dài.
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
