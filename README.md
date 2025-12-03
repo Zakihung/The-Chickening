@@ -37,7 +37,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── sound_manager.py `# Quản lý load/play SFX/music`
 - │   │   └── item_manager.py  `# Quản lý items và synergies`
 - │   ├── screens/             `# Các màn hình/game states`
-- │   │   ├── main_menu.py     `# Menu chính`
+- │   │   ├── main_menu.py     `# Menu chính với nút start/options/quit`
 - │   │   ├── game_screen.py   `# Màn chơi chính (arena)`
 - │   │   ├── safe_zone.py     `# Chuồng Gà (shop, skills, missions)`
 - │   │   └── game_over.py     `# Màn thua`
@@ -156,6 +156,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Roguelite: Per upgrade, if player.branch, get_random from that, else choose branch first.
 - Ngày 47: Thêm random selection roguelite trong skills.py (per upgrade get_random_skills 3 from player.branch, simulate choose 1 to apply, roguelite increase replayability by random each run).
 - Ngày 48: Tích hợp skills vào player đầy đủ trong skills.py và player.py (apply skills effects to player combat (e.g., crit_rate on ranged hit damage *2 if random < rate, pierce hit multiple enemies, stun add timer to enemy no move), passive always on (e.g., armor_mult reduce damage in take_damage), test in game).
+- Ngày 49: Tạo file main_menu.py trong modules/screens/ để định nghĩa class MainMenu (menu chính: buttons start game, options (placeholder), quit, use Pygame rect/text for clickable buttons, handle mouse click to transition states).
 
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
