@@ -8,6 +8,7 @@ from modules.utils.constants import (
 )
 from modules.utils.helpers import rect_collision  # Để collision sau
 from modules.entities.projectile import Projectile  # Để spawn arrow
+from modules.entities.resource import Resource
 
 class Enemy(BaseEntity):
     def __init__(self, x, y, enemy_type='runner'):
@@ -274,9 +275,11 @@ class Enemy(BaseEntity):
             player.take_damage(10)  # Damage placeholder khi chạm
 
         # Drop thóc khi chết (placeholder print)
-        if not self.alive:
+        if not self.alive and not hasattr(self, 'dropped'):
             if random.random() < DROP_THO_RATE:
-                print("Dropped thóc!")  # TODO: Tạo resource.py drop
+                thoc = Resource(self.rect.centerx, self.rect.centery, random.randint(5, 20))
+                # Add to global resources list (placeholder in game_screen)
+            self.dropped = True  # Avoid multi-drop
 
     def is_back_hit(self, attacker_pos):
         """
