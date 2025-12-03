@@ -71,6 +71,7 @@ class Player(BaseEntity):
         self.ranged_pierce = 0
         self.bomb_aoe_radius = BOMB_AOE_RADIUS
         self.bomb_stun = 0.0
+        self.upgrade_levels = {'melee': 0, 'ranged': 0, 'bomb': 0}  # Per branch levels
 
     def update(self, delta_time, keys):
         """

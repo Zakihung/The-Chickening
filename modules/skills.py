@@ -12,13 +12,26 @@ class Skills:
             self.skills_data = json.load(f)['branches']  # Dict branches {melee: {skills: list}}
 
         self.branches = list(self.skills_data.keys())  # ['melee', 'ranged', 'bomb']
+        self.upgrade_levels = {'melee': 0, 'ranged': 0, 'bomb': 0}  # Track levels per branch (placeholder player)
 
     def get_random_skills(self, branch, count=3):
-        """Return random 3 skills from branch (roguelite choose 1)."""
+        """Return random 3 unique skills from branch (no dup)."""
         branch_skills = self.skills_data.get(branch, {}).get('skills', [])
         if len(branch_skills) < count:
             return branch_skills
-        return random.sample(branch_skills, count)
+        return random.sample(branch_skills, count)  # Unique sample
+
+    def upgrade_skill_tree(self, player):
+        """Simulate upgrade: Get 3 random from branch, choose 1 apply, inc level."""
+        if player.branch:
+            random_skills = self.get_random_skills(player.branch, 3)
+            if random_skills:
+                # Placeholder choose first (UI later random or user select)
+                selected = random_skills[0]
+                if self.apply_skill(player, selected['id']):
+                    self.upgrade_levels[player.branch] += 1
+                    return selected
+        return None
 
     def apply_skill(self, player, skill_id):
         """Apply skill effects to player."""
