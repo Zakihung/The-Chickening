@@ -74,13 +74,13 @@ class Projectile(BaseEntity):
             if self.alive and entity.alive and entity != self:  # Không hit self
                 if self.type == 'ranged':
                     if rect_collision(self.rect, entity.rect):
-                        entity.take_damage(self.damage)
+                        entity.take_damage(self.damage, self.rect.center)
                         self.alive = False  # Destroy proj sau hit
                         hit_entities.append(entity)
                 elif self.type == 'bomb' and self.exploded:
                     # AOE check: Distance < radius
                     dist = math.hypot(self.rect.centerx - entity.rect.centerx, self.rect.centery - entity.rect.centery)
                     if dist <= self.aoe_radius:
-                        entity.take_damage(self.damage)
+                        entity.take_damage(self.damage, self.rect.center)
                         hit_entities.append(entity)
         return hit_entities  # Để sound/effect sau

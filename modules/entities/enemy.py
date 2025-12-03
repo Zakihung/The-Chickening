@@ -47,6 +47,14 @@ class Enemy(BaseEntity):
         self.bomb_speed = 4  # Tốc độ ném bom (chậm hơn arrow)
         self.bomb_throw_range_min = 200  # Min dist để ném
         self.bomb_throw_range_max = 400  # Max dist để ném
+        self.shield_turn_timer = 0  # Timer quay lưng (expose back)
+        self.shield_turn_duration = 0  # Thời gian expose back (1-2s)
+        self.shield_cooldown = 0  # Cooldown trước khi turn back lại
+        self.back_weak_mult = 2.0  # Sát thương x2 nếu hit back
+        self.front_resist_mult = 0.2  # Giảm 80% damage nếu hit front
+        self.shield_hp = 50  # HP riêng cho khiên (giảm khi hit front)
+        self.shield_max_hp = 50
+        self.facing_player = True  # Flag quay mặt player (shield front)
 
     def update(self, delta_time, player=None):
         """
@@ -140,6 +148,31 @@ class Enemy(BaseEntity):
                         if not proj.alive:
                             self.projectiles.remove(proj)
 
+                elif self.type == 'shield':
+                    # Shield AI: Quay mặt player (shield front), random turn back expose weak
+                    if dist > 0:
+                        base_dir = pygame.Vector2(dx / dist, dy / dist)
+                        self.direction = -base_dir  # Quay mặt player (direction ngược = face to)
+
+                    # Turn back logic: Random expose back
+                    if self.shield_turn_duration <= 0 and self.shield_cooldown <= 0:
+                        if random.random() < 0.01:  # 1% chance mỗi frame ~1s average
+                            self.facing_player = False  # Turn back
+                            self.shield_turn_duration = random.uniform(1, 2)
+                    if self.shield_turn_duration > 0:
+                        self.shield_turn_duration -= delta_time
+                        if self.shield_turn_duration <= 0:
+                            self.shield_cooldown = 3.0  # Cooldown 3s trước turn back tiếp
+                            self.facing_player = True
+                    if self.shield_cooldown > 0:
+                        self.shield_cooldown -= delta_time
+
+                    # Attack melee nếu gần và facing_player=False (back attack?)
+                    if dist < self.attack_range and not self.facing_player and not player.invincible:
+                        player.take_damage(self.attack_damage * 1.5)  # Stronger back attack
+
+                    self.speed = ENEMY_SPEED_BASE * 0.8  # Chậm hơn vì giáp nặng
+
                 else:
                     # Fallback random cho type khác
                     self.direction_change_timer -= delta_time
@@ -164,6 +197,32 @@ class Enemy(BaseEntity):
         if not self.alive:
             if random.random() < DROP_THO_RATE:
                 print("Dropped thóc!")  # TODO: Tạo resource.py drop
+
+    def take_damage(self, damage, attacker_pos=None):
+        """
+        Override: Giảm damage front, full back, damage shield nếu front.
+        """
+        if self.type == 'shield' and attacker_pos:
+            if self.is_back_hit(attacker_pos):
+                damage *= self.back_weak_mult
+            else:
+                damage *= self.front_resist_mult
+                self.shield_hp -= damage * 0.5  # Damage shield riêng
+                if self.shield_hp <= 0:
+                    self.shield_hp = 0
+                    # Break shield: Full damage sau
+        super().take_damage(damage)
+
+    def is_back_hit(self, attacker_pos):
+        """
+        Check nếu hit từ phía sau (dot product < 0).
+        :param attacker_pos: Vị trí attacker (projectile hoặc player)
+        """
+        to_attacker = pygame.Vector2(attacker_pos[0] - self.rect.centerx, attacker_pos[1] - self.rect.centery)
+        to_attacker.normalize_ip()
+        facing_dir = -self.direction if self.facing_player else self.direction  # Front/back dir
+        dot = to_attacker.dot(facing_dir)
+        return dot < 0  # Back hit nếu góc >90 độ
 
     def draw(self, screen):
         """
