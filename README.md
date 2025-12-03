@@ -140,6 +140,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - Ngày 38: Thêm boss every 5 levels đầy đủ trong level_manager.py (dựa current_level %5==0 spawn Boss thay waves, load boss data từ json nếu có, integrate summon minions, ensure clear when boss dead).
 - Ngày 39: Tạo maps (farm, forest, village, volcano, etc.) trong level_manager.py (load background image từ assets dựa map_type/background json, draw background, add simple obstacles/environment entities từ map_type - placeholder rect block movement/collision).
 - Ngày 40: Tạo file sound_manager.py trong modules/managers/ để load sounds (load SFX/music từ assets/sounds/, placeholder dict for sounds like cluck.wav, auu.wav, explosion.wav). Manager sẽ singleton-like, load on init, ready for play in Ngày 41.
+- Ngày 41: Thêm play music và SFX đầy đủ trong sound_manager.py và entities (play music_wave.mp3 loop on wave start, SFX cluck on player skills, auu on enemy damage, explosion on bomb explode, refine volume/fade).
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
