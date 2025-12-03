@@ -22,9 +22,8 @@ class Resource(BaseEntity):
         Update: Check collide player để collect.
         """
         if player and rect_collision(self.rect, player.rect):
-            player.thoc += self.amount  # Add to player thoc (placeholder)
-            self.alive = False  # Remove sau collect
-            # TODO: Sound/effect
+            player.thoc_collected += self.amount  # Add to collected
+            self.alive = False
 
     def draw(self, screen):
         """

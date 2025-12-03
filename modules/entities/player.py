@@ -1,13 +1,17 @@
 # modules/entities/player.py
+import random
+
 import pygame
 from modules.entities.base_entity import BaseEntity
 from modules.utils.constants import (
     PLAYER_HP_DEFAULT, PLAYER_SPEED_DEFAULT, EGGNERGY_MAX, DODGE_COOLDOWN,
     SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, COLOR_BLACK, COLOR_RED,
-    MELEE_RANGE, PLAYER_DAMAGE_DEFAULT, RANGED_RANGE, BOMB_DAMAGE, BOMB_AOE_RADIUS, BOMB_LIMIT
+    MELEE_RANGE, PLAYER_DAMAGE_DEFAULT, RANGED_RANGE, BOMB_DAMAGE, BOMB_AOE_RADIUS, BOMB_LIMIT,
+    THOC_LOSS_ON_DEATH,
 )
 from modules.entities.projectile import Projectile
 from modules.utils.helpers import rect_collision
+from modules.entities.resource import Resource  # Để drop khi die
 
 class Player(BaseEntity):
     def __init__(self):
@@ -50,6 +54,10 @@ class Player(BaseEntity):
         self.bomb_current = self.bomb_max  # Số bomb hiện có
         self.bomb_regen_timer = 0  # Timer regen bomb
         self.enemies = []  # List enemies để check collision
+
+        self.thoc_collected = 0  # Thóc nhặt giữa trận
+        self.thoc_stored = 0  # Thóc đã cất an toàn
+        self.dropped_resources = []  # List Resource drop khi die (tạm)
 
     def update(self, delta_time, keys):
         """
@@ -165,6 +173,10 @@ class Player(BaseEntity):
         # Regen eggnergy
         self.eggnergy = min(self.eggnergy + 10 * delta_time, EGGNERGY_MAX)
 
+        if self.hp <= 0 and self.alive:
+            self.alive = False
+            self.die()
+
     def draw(self, screen):
         """
         Override draw: Vẽ player và thêm eggnergy bar, hiệu ứng dodge.
@@ -192,3 +204,25 @@ class Player(BaseEntity):
         pygame.draw.rect(screen, COLOR_YELLOW, energy_bar_rect)
         full_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.rect.width, 5)
         pygame.draw.rect(screen, COLOR_BLACK, full_bar_rect, 1)
+
+    def store_thoc(self):
+        """Store thóc về chuồng (gọi khi vào safe zone)."""
+        self.thoc_stored += self.thoc_collected
+        self.thoc_collected = 0
+
+    def die(self):
+        """Handle khi chết: Mất 50% thoc_collected, drop remaining."""
+        if self.thoc_collected > 0:
+            lost = int(self.thoc_collected * THOC_LOSS_ON_DEATH)
+            remaining = self.thoc_collected - lost
+            self.thoc_collected = 0
+            # Drop remaining as Resources around player
+            for _ in range(remaining // 5):  # Mỗi 5 thóc 1 Resource
+                drop_x = self.rect.centerx + random.randint(-50, 50)
+                drop_y = self.rect.centery + random.randint(-50, 50)
+                drop = Resource(drop_x, drop_y, 5)
+                self.dropped_resources.append(drop)
+            print(f"Lost {lost} thóc! Dropped {remaining} to collect again.")
+        # Reset HP, position (placeholder)
+        self.hp = self.max_hp
+        self.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)

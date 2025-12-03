@@ -19,7 +19,15 @@ class GameScreen:
         self.player.update(delta_time, keys)
         self.test_boss.update(delta_time, self.player)
 
-        for res in self.resources: res.update(delta_time, self.player)
+        # Update resources (bao gồm dropped từ player.die)
+        for res in self.resources[:]:
+            res.update(delta_time, self.player)
+            if not res.alive:
+                self.resources.remove(res)
+        # Add dropped từ player
+        for drop in self.player.dropped_resources[:]:
+            self.resources.append(drop)
+            self.player.dropped_resources.remove(drop)
 
         # Test damage nếu không invincible (optional, có thể xóa sau)
         if not self.player.invincible:
@@ -30,5 +38,6 @@ class GameScreen:
         self.screen.fill(self.background_color)
         self.player.draw(self.screen)
         self.test_boss.draw(self.screen)
-        for res in self.resources: res.draw(self.screen)
+        for res in self.resources:
+            res.draw(self.screen)
         pygame.draw.rect(self.screen, (0, 100, 0), (0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100))  # Grass placeholder
