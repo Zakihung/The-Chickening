@@ -135,6 +135,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Update: Spawn enemies từ random spawn_point per wave, timer delay.
   - Clear check: No enemies (sẽ add destroy all spawns sau).
   - Draw: Spawn/enemies.
+- Ngày 36: Thêm spawn points phá hủy được trong level_manager.py (spawn_points là BaseEntity với HP, destroy khi hit projectile/melee, progress level khi all spawns destroyed + no enemies).
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
