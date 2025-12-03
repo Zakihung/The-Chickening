@@ -105,6 +105,12 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Placeholder draw: Circle màu theo type.
   - Sau: Load image từ assets, collision với enemies.
 - Ngày 23: Tích hợp projectile vào player attacks đầy đủ, thêm collision cơ bản giữa projectile và entities (test với placeholder entity, vì enemy chưa có). Chúng ta sẽ refine player.py để handle collision (projectile hit thì apply damage, remove proj), thêm invincible check (không damage nếu player invincible), và refine Projectile để support collision.
+- Ngày 24: Tạo file enemy.py trong modules/entities/ để định nghĩa class Enemy base kế thừa từ BaseEntity. Đây là foundation cho kẻ thù (cáo đỏ), với AI simple ban đầu: Di chuyển ngẫu nhiên (random direction thay đổi theo thời gian), speed từ constants, và placeholder cho behaviors phức tạp hơn sau (zigzag, keep distance, v.v.). Enemy sẽ có HP, damage (khi collide player), và drop thóc khi chết (placeholder).
+  - Kế thừa BaseEntity: Reuse position, HP, movement, draw (HP bar).
+  - AI simple: Change direction random mỗi 1-2s dùng timer delta_time, direction dùng math cho góc ngẫu nhiên.
+  - Collision: Check chạm player thì damage (nếu không invincible), placeholder.
+  - Drop: Khi chết, random drop thóc dựa DROP_THO_RATE (print tạm).
+  - Type: Placeholder cho override (e.g., 'runner' zig-zag sau).
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
