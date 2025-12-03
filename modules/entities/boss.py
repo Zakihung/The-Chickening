@@ -25,6 +25,11 @@ class Boss(Enemy):
         self.phase_thresholds = [0.5, 0.2]  # Change tại 50%, 20% HP
         self.minions = []  # List minions summon
         self.attack_cooldown = 0  # Cooldown attacks
+        self.dash_duration = 0  # Thời gian dash temp
+        self.dash_multiplier = 2.0  # Tăng speed x2 khi dash
+        self.spear_damage = 40  # Sát thương thương
+        self.spear_speed = 12  # Tốc độ spear proj
+        self.spear_length = 100  # Range dài (extend hitbox hoặc proj size)
 
     def update(self, delta_time, player=None):
         """
@@ -43,20 +48,32 @@ class Boss(Enemy):
             self.speed *= 1.2  # Thêm tốc
             self.summon_minions(5)  # Summon cáo con
 
-        # Boss1 AI: Lao thương (charge) về player
-        if player and self.attack_cooldown <= 0:
-            # Tính dir tới player, charge (tăng speed temp)
+        if player and self.attack_cooldown <= 0 and self.phase == 1:
+            # Phase 1: Lao với thương
             dx = player.rect.centerx - self.rect.centerx
             dy = player.rect.centery - self.rect.centery
             dist = math.hypot(dx, dy)
             if dist > 0:
                 base_dir = pygame.Vector2(dx / dist, dy / dist)
                 self.direction = base_dir
+                self.dash_duration = 1.0  # Dash 1s
                 self.attack_cooldown = 3.0  # Cooldown 3s
-                # Spawn 'spear' proj hoặc damage on path (placeholder melee range tăng)
+                # Spawn spear proj dài hướng player
+                spear_rect = pygame.Rect(self.rect.centerx, self.rect.centery, self.spear_length, 10)
+                spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage,
+                                   self.spear_speed)
+                spear.rect = spear_rect  # Extend rect cho long spear
+                self.projectiles.append(spear)  # Reuse projectiles list từ Enemy
 
         if self.attack_cooldown > 0:
             self.attack_cooldown -= delta_time
+
+        # Dash logic
+        if self.dash_duration > 0:
+            self.dash_duration -= delta_time
+            self.speed *= self.dash_multiplier
+            if self.dash_duration <= 0:
+                self.speed /= self.dash_multiplier  # Reset speed
 
         # Update minions (như projectiles)
         for minion in self.minions[:]:

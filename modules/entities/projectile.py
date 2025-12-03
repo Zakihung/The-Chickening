@@ -9,7 +9,7 @@ from modules.utils.helpers import rect_collision
 
 
 class Projectile(BaseEntity):
-    def __init__(self, x, y, direction, proj_type='ranged', damage=15, speed=10, aoe_radius=0):
+    def __init__(self, x, y, direction, proj_type='ranged', damage=15, speed=10, aoe_radius=0, length=10):
         width, height = (10, 10) if proj_type == 'ranged' else (50, 50)
         super().__init__(x, y, width, height, hp=1, speed=speed)
         self.direction = direction.normalize() if direction.length() > 0 else pygame.Vector2(1, 0)
@@ -19,6 +19,8 @@ class Projectile(BaseEntity):
         self.explode_timer = 2.0 if proj_type == 'bomb' else 0  # Delay explode cho bomb
         self.exploded = False
         self.image = None  # Load sprite sau (feather.png hoặc egg.png)
+        width = length if proj_type == 'ranged' else 10  # Spear long
+        self.rect = pygame.Rect(x - width / 2, y - 5, width, 10)
 
         # Placeholder image: Circle/vuông
         if proj_type == 'ranged':
