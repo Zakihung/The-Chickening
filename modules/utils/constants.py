@@ -38,6 +38,6 @@ THOC_LOSS_ON_DEATH = 0.5  # Mất 50% thóc khi chết
 WAVE_COUNT_PER_LEVEL = 5  # Số wave tối thiểu mỗi màn
 
 # Paths (cho assets, sẽ dùng sau)
-ASSETS_PATH = "../assets/"
+ASSETS_PATH = "assets/"
 IMAGES_PATH = ASSETS_PATH + "images/"
 SOUNDS_PATH = ASSETS_PATH + "sounds/"

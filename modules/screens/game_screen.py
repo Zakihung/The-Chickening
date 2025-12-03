@@ -32,10 +32,7 @@ class GameScreen:
             self.player.take_damage(0.1)  # Test HP giảm chậm
 
     def draw_background(self):
-        """Draw background và entities."""
-        self.screen.fill(self.background_color)
-        self.level_manager.draw(self.screen)
+        self.level_manager.draw(self.screen)  # Draw bg/obs/enemies/spawns
         self.player.draw(self.screen)
         for res in self.resources:
             res.draw(self.screen)
-        pygame.draw.rect(self.screen, (0, 100, 0), (0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100))  # Grass placeholder
