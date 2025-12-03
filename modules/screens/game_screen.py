@@ -4,6 +4,7 @@ from modules.utils.constants import SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_GREEN
 from modules.entities.player import Player
 from modules.managers.level_manager import LevelManager
 from modules.managers.sound_manager import SoundManager
+from modules.managers.item_manager import ItemManager
 
 class GameScreen:
     def __init__(self, screen):
@@ -16,6 +17,9 @@ class GameScreen:
         # self.sound_manager = SoundManager()
         # self.sound_manager.play_music('music_wave.mp3', 0.5)  # Loop music
         # self.sound_manager.play_music('music_wave.mp3')  # Loop with fade
+        self.item_manager = ItemManager()
+        # Test equip
+        self.item_manager.equip_item(self.player, 1)  # Mỏ Thép id1
 
     def update(self, delta_time, keys):
         """Update entities với delta_time và keys."""

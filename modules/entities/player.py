@@ -55,6 +55,10 @@ class Player(BaseEntity):
         self.thoc_collected = 0  # Thóc nhặt giữa trận
         self.thoc_stored = 0  # Thóc đã cất an toàn
         self.dropped_resources = []  # List Resource drop khi die (tạm)
+        self.equipped_items = []  # List id equipped
+        self.armor = 0  # For armor_bonus
+        self.burn_damage = 0  # For synergy
+        # Add more for effects
 
     def update(self, delta_time, keys):
         """

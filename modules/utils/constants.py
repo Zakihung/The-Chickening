@@ -41,3 +41,4 @@ WAVE_COUNT_PER_LEVEL = 5  # Số wave tối thiểu mỗi màn
 ASSETS_PATH = "assets/"
 IMAGES_PATH = ASSETS_PATH + "images/"
 SOUNDS_PATH = ASSETS_PATH + "sounds/"
+DATA_PATH = "data/"
