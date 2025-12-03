@@ -30,7 +30,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── player.py        `# Class Player (movement input handling, flip sprite, dodge placeholder)`
 - │   │   ├── enemy.py         `# Class Enemy base (AI behaviors)`
 - │   │   ├── boss.py          `# Class Boss (phases, special attacks)`
-- │   │   ├── projectile.py    `# Đạn (lông, trứng nổ)`
+- │   │   ├── projectile.py    `# Class Projectile (movement, explode, collision/damage handling)`
 - │   │   └── resource.py      `# Thóc và drops`
 - │   ├── managers/            `# Quản lý hệ thống`
 - │   │   ├── level_manager.py `# Quản lý waves, spawns, maps`
@@ -104,6 +104,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Type-specific: Ranged bay mãi đến out screen; Bomb countdown explode, vẽ AOE.
   - Placeholder draw: Circle màu theo type.
   - Sau: Load image từ assets, collision với enemies.
+- Ngày 23: Tích hợp projectile vào player attacks đầy đủ, thêm collision cơ bản giữa projectile và entities (test với placeholder entity, vì enemy chưa có). Chúng ta sẽ refine player.py để handle collision (projectile hit thì apply damage, remove proj), thêm invincible check (không damage nếu player invincible), và refine Projectile để support collision.
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
