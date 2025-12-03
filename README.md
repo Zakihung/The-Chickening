@@ -45,7 +45,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── constants.py     `# Hằng số (colors, sizes, etc.)`
 - │   │   ├── helpers.py       `# Hàm tiện ích (collision, random)`
 - │   │   └── hud.py           `# Heads-Up Display (HP, energy bar)`
-- │   └── skills.py            `# Load/apply skills from json, random select roguelite, skill tree branches melee/ranged/bomb with apply, random roguelite selection per upgrade`
+- │   └── skills.py            `# Load/apply skills from json, random select roguelite, skill tree branches melee/ranged/bomb with apply, random roguelite selection per upgrade, integrate skills effects into player combat`
 - └── tests/                   `# Unit tests (e.g., test_player.py)`
 
 
@@ -155,6 +155,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - choose_branch: Set player.branch (use for next upgrades random from branch).
   - Roguelite: Per upgrade, if player.branch, get_random from that, else choose branch first.
 - Ngày 47: Thêm random selection roguelite trong skills.py (per upgrade get_random_skills 3 from player.branch, simulate choose 1 to apply, roguelite increase replayability by random each run).
+- Ngày 48: Tích hợp skills vào player đầy đủ trong skills.py và player.py (apply skills effects to player combat (e.g., crit_rate on ranged hit damage *2 if random < rate, pierce hit multiple enemies, stun add timer to enemy no move), passive always on (e.g., armor_mult reduce damage in take_damage), test in game).
 
 Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
