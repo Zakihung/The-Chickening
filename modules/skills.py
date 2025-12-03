@@ -52,11 +52,12 @@ class Skills:
                     player.bomb_aoe_radius += effects['aoe_radius_bonus']
                 if 'passive' in skill:
                     if skill['passive'] == 'Tăng giáp 10%':
-                        player.armor_mult = 1.1  # Add player.armor_mult = 1.0 in init
+                        player.armor_mult *= 1.1  # Accum mult
                     elif skill['passive'] == 'Bắn xuyên 1 kẻ thù':
-                        player.ranged_pierce = 1  # Add ranged_pierce = 0
+                        player.ranged_pierce += 1  # Accum pierce count
                     elif skill['passive'] == 'Trứng gây stun 2s':
-                        player.bomb_stun = 2.0  # Add bomb_stun = 0
+                        player.bomb_stun += 2.0  # Accum stun time
+                    # Add more: 'Né 1 đòn mỗi 15s' = player.dodge_timer = 15.0
                 player.unlocked_skills.append(skill_id)
                 player.branch = branch  # Set chosen branch
                 return True

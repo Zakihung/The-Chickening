@@ -68,6 +68,7 @@ class Enemy(BaseEntity):
         self.barrier_projectiles = []  # List barrier projs riêng (persistent)
         self.allies = []  # List enemies để buff (placeholder, pass từ manager sau)
         self.dropped = False  # Flag để tránh drop multi
+        self.stun_timer = 0  # Stun no move
 
     def update(self, delta_time, player=None):
         """
