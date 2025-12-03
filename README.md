@@ -33,7 +33,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── projectile.py    `# Class Projectile (movement, explode, collision/damage handling)`
 - │   │   └── resource.py      `# Class Resource (thóc drops, collect, thoc_collected/stored, die lose 50% with drop)`
 - │   ├── managers/            `# Quản lý hệ thống`
-- │   │   ├── level_manager.py `# Quản lý waves, spawns, levels từ json, level progression, boss every 5`
+- │   │   ├── level_manager.py `# Quản lý waves, spawns, levels từ json, level progression, boss every 5 levels integration, maps with bg and obstacles per type`
 - │   │   ├── sound_manager.py `# Quản lý nhạc và SFX`
 - │   │   └── item_manager.py  `# Quản lý items và synergies`
 - │   ├── screens/             `# Các màn hình/game states`
@@ -137,6 +137,8 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Draw: Spawn/enemies.
 - Ngày 36: Thêm spawn points phá hủy được trong level_manager.py (spawn_points là BaseEntity với HP, destroy khi hit projectile/melee, progress level khi all spawns destroyed + no enemies).
 - Ngày 37: Quản lý level progression trong level_manager.py (5-10 waves/level từ WAVE_COUNT_PER_LEVEL, auto next level khi clear, boss every 5 levels spawn Boss thay waves, update progression (current_level tăng, load next json)).
+- Ngày 38: Thêm boss every 5 levels đầy đủ trong level_manager.py (dựa current_level %5==0 spawn Boss thay waves, load boss data từ json nếu có, integrate summon minions, ensure clear when boss dead).
+- Ngày 39: Tạo maps (farm, forest, village, volcano, etc.) trong level_manager.py (load background image từ assets dựa map_type/background json, draw background, add simple obstacles/environment entities từ map_type - placeholder rect block movement/collision).
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
@@ -252,6 +254,9 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Ngày 198: Commit final Git.
   - Ngày 199: Buffer cho bất kỳ sửa chữa cuối.
   - Ngày 200: Hoàn thành: Release version 1.0.
+
+#### Ghi chú tạm
+Bỏ main, base-entity, resource khỏi promt chỉnh sửa các file
 
 # Promt để tiếp tục dự án khi bắt đầu một chat mới
 Trả lời bằng tiếng việt. Tôi đã lên ý tưởng gameplay để lập trình game này hãy giúp tôi tạo dự án game này với python 3.8 và pygame, tạo thành nhiều module nhỏ để dễ quản lý và chỉnh sửa, Gameplay như sau: "THE CHICKENING – GAMEPLAY DESIGN
