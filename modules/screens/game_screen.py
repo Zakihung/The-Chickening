@@ -19,7 +19,7 @@ class GameScreen:
         # self.sound_manager.play_music('music_wave.mp3')  # Loop with fade
         self.item_manager = ItemManager()
         # Test equip
-        self.item_manager.equip_item(self.player, 1)  # Mỏ Thép id1
+        self.item_manager.equip_item(self.player, 1)  # Test equip id1
 
     def update(self, delta_time, keys):
         """Update entities với delta_time và keys."""

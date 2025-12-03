@@ -3,8 +3,9 @@ import math
 import pygame
 import random
 from modules.entities.base_entity import BaseEntity
+from modules.managers import item_manager
 from modules.utils.constants import (
-    ENEMY_HP_BASE, ENEMY_SPEED_BASE, COLOR_RED, DROP_THO_RATE, SCREEN_WIDTH, SCREEN_HEIGHT
+    ENEMY_HP_BASE, ENEMY_SPEED_BASE, COLOR_RED, DROP_THO_RATE, SCREEN_WIDTH, SCREEN_HEIGHT, BOMB_AOE_RADIUS
 )
 from modules.utils.helpers import rect_collision
 from modules.entities.projectile import Projectile
@@ -259,10 +260,12 @@ class Enemy(BaseEntity):
 
         # Drop thóc khi chết (placeholder print)
         if not self.alive and not self.dropped:
+            self.dropped = True
             if random.random() < DROP_THO_RATE:
-                thoc = Resource(self.rect.centerx, self.rect.centery, random.randint(5, 20))
-                # Add to global resources list (placeholder in game_screen)
-            self.dropped = True  # Avoid multi-drop
+            # Drop thóc
+                if random.random() < 0.2:  # Chance drop item
+                    item_id = item_manager.get_random_item()  # Pass global item_manager
+                    # Add to player.inventory or drop as Resource-like entity (placeholder player.equip_item(item_id))
 
     def is_back_hit(self, attacker_pos):
         """

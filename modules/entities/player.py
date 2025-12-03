@@ -58,6 +58,9 @@ class Player(BaseEntity):
         self.equipped_items = []  # List id equipped
         self.armor = 0  # For armor_bonus
         self.burn_damage = 0  # For synergy
+        self.equipped_slots = {'weapon': None, 'armor': None, 'accessory': None, 'boots': None}  # Slots per type
+        self.base_melee_damage = PLAYER_DAMAGE_DEFAULT  # Base to reverse
+        self.base_speed = PLAYER_SPEED_DEFAULT  # Etc for reverse
         # Add more for effects
 
     def update(self, delta_time, keys):
@@ -181,6 +184,21 @@ class Player(BaseEntity):
         if self.hp <= 0 and self.alive:
             self.alive = False
             self.die()
+
+    def equip_item(self, item_id):
+        item = self.item_manager.get_item_by_id(item_id)  # Assume self.item_manager from game_screen pass
+        if item and item['type'] in self.equipped_slots:
+            if self.equipped_slots[item['type']]:
+                self.unequip_item(self.equipped_slots[item['type']])
+            self.equipped_slots[item['type']] = item_id
+            self.item_manager.equip_item(self, item_id)  # Apply
+
+    def unequip_item(self, item_id):
+        for slot, equipped_id in self.equipped_slots.items():
+            if equipped_id == item_id:
+                self.item_manager.unequip_item(self, item_id)  # Reverse
+                self.equipped_slots[slot] = None
+                break
 
     def draw(self, screen):
         """
