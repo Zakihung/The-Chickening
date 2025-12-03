@@ -1,17 +1,15 @@
 # modules/entities/player.py
-import random
-
 import pygame
+import random
 from modules.entities.base_entity import BaseEntity
 from modules.utils.constants import (
     PLAYER_HP_DEFAULT, PLAYER_SPEED_DEFAULT, EGGNERGY_MAX, DODGE_COOLDOWN,
     SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, COLOR_BLACK, COLOR_RED,
-    MELEE_RANGE, PLAYER_DAMAGE_DEFAULT, RANGED_RANGE, BOMB_DAMAGE, BOMB_AOE_RADIUS, BOMB_LIMIT,
-    THOC_LOSS_ON_DEATH,
+    MELEE_RANGE, PLAYER_DAMAGE_DEFAULT, RANGED_RANGE, BOMB_DAMAGE, BOMB_AOE_RADIUS, BOMB_LIMIT, THOC_LOSS_ON_DEATH
 )
 from modules.entities.projectile import Projectile
 from modules.utils.helpers import rect_collision
-from modules.entities.resource import Resource  # Để drop khi die
+from modules.entities.resource import Resource
 
 class Player(BaseEntity):
     def __init__(self):
@@ -54,7 +52,6 @@ class Player(BaseEntity):
         self.bomb_current = self.bomb_max  # Số bomb hiện có
         self.bomb_regen_timer = 0  # Timer regen bomb
         self.enemies = []  # List enemies để check collision
-
         self.thoc_collected = 0  # Thóc nhặt giữa trận
         self.thoc_stored = 0  # Thóc đã cất an toàn
         self.dropped_resources = []  # List Resource drop khi die (tạm)
@@ -119,7 +116,7 @@ class Player(BaseEntity):
         if self.melee_hitbox:
             for enemy in self.enemies:
                 if rect_collision(self.melee_hitbox, enemy.rect):
-                    enemy.take_damage(self.melee_damage)
+                    enemy.take_damage(self.melee_damage, self.rect.center)  # Pass pos for directional
 
         # Update melee timers
         if self.melee_duration > 0:

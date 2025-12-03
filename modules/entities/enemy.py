@@ -4,10 +4,10 @@ import pygame
 import random
 from modules.entities.base_entity import BaseEntity
 from modules.utils.constants import (
-    ENEMY_HP_BASE, ENEMY_SPEED_BASE, COLOR_RED, DROP_THO_RATE, BOMB_AOE_RADIUS
+    ENEMY_HP_BASE, ENEMY_SPEED_BASE, COLOR_RED, DROP_THO_RATE, SCREEN_WIDTH, SCREEN_HEIGHT
 )
-from modules.utils.helpers import rect_collision  # Để collision sau
-from modules.entities.projectile import Projectile  # Để spawn arrow
+from modules.utils.helpers import rect_collision
+from modules.entities.projectile import Projectile
 from modules.entities.resource import Resource
 
 class Enemy(BaseEntity):
@@ -66,25 +66,11 @@ class Enemy(BaseEntity):
         self.barrier_radius = 80  # Bán kính vòng cản
         self.barrier_projectiles = []  # List barrier projs riêng (persistent)
         self.allies = []  # List enemies để buff (placeholder, pass từ manager sau)
-
-    def take_damage(self, damage, attacker_pos=None):
-        """
-        Override: Giảm damage front, full back, damage shield nếu front.
-        """
-        if self.type == 'shield' and attacker_pos:
-            if self.is_back_hit(attacker_pos):
-                damage *= self.back_weak_mult
-            else:
-                damage *= self.front_resist_mult
-                self.shield_hp -= damage * 0.5  # Damage shield riêng
-                if self.shield_hp <= 0:
-                    self.shield_hp = 0
-                    print("Shield broken!")  # Optional effect
-        super().take_damage(damage)  # Gọi BaseEntity với pos (ignore ở base)
+        self.dropped = False  # Flag để tránh drop multi
 
     def update(self, delta_time, player=None):
         """
-        Override update: AI simple - di chuyển ngẫu nhiên, hoặc zig-zag áp sát nếu 'runner'.
+        Override update: AI simple - di chuyển ngẫu nhiên, change direction random.
         :param player: Player instance để target
         """
         super().update(delta_time)
@@ -101,11 +87,9 @@ class Enemy(BaseEntity):
 
                 if self.type == 'runner':
                     # Zig-zag AI: Thêm offset sin cho y (lắc lên xuống)
-                    offset = math.sin(
-                        self.time * self.zigzag_frequency) * self.zigzag_amplitude / dist  # Scale với dist
+                    offset = math.sin(self.time * self.zigzag_frequency) * self.zigzag_amplitude / dist  # Scale với dist
                     self.direction = pygame.Vector2(base_dir.x, base_dir.y + offset)
-                    if self.direction.length() > 0:
-                        self.direction.normalize_ip()
+                    self.direction.normalize_ip() if self.direction.length() > 0 else None
                     self.speed = ENEMY_SPEED_BASE * 1.5  # Tốc độ nhanh hơn cho runner
 
                     # Attack nếu trong range (placeholder damage)
@@ -127,8 +111,7 @@ class Enemy(BaseEntity):
                         if self.shoot_cooldown <= 0:
                             # Spawn arrow hướng tới player
                             arrow_dir = base_dir
-                            arrow = Projectile(self.rect.centerx, self.rect.centery, arrow_dir, 'ranged',
-                                               self.arrow_damage, self.arrow_speed)
+                            arrow = Projectile(self.rect.centerx, self.rect.centery, arrow_dir, 'ranged', self.arrow_damage, self.arrow_speed)
                             self.projectiles.append(arrow)
                             self.shoot_cooldown = 1.5  # Reset cooldown
 
@@ -158,8 +141,7 @@ class Enemy(BaseEntity):
                             if self.bomb_throw_cooldown <= 0:
                                 # Ném bom hướng tới player
                                 bomb_dir = base_dir
-                                bomb = Projectile(self.rect.centerx, self.rect.centery, bomb_dir, 'bomb',
-                                                  self.bomb_damage, self.bomb_speed, BOMB_AOE_RADIUS)
+                                bomb = Projectile(self.rect.centerx, self.rect.centery, bomb_dir, 'bomb', self.bomb_damage, self.bomb_speed, BOMB_AOE_RADIUS)
                                 self.projectiles.append(bomb)
                                 self.bomb_throw_cooldown = 2.5  # Reset cooldown
 
@@ -170,7 +152,7 @@ class Enemy(BaseEntity):
                     # Update projectiles (đã có từ archer, reuse cho bomber)
                     for proj in self.projectiles[:]:
                         proj.update(delta_time)
-                        proj.check_collision([player])  # Check AOE damage player
+                        proj.check_collision([player])
                         if not proj.alive:
                             self.projectiles.remove(proj)
 
@@ -209,8 +191,7 @@ class Enemy(BaseEntity):
 
                     # Cast lửa (ranged proj hướng player)
                     if self.fire_cast_cooldown <= 0:
-                        fire = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.fire_damage,
-                                          self.fire_speed)
+                        fire = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.fire_damage, self.fire_speed)
                         self.projectiles.append(fire)
                         self.fire_cast_cooldown = 2.0
 
@@ -229,8 +210,7 @@ class Enemy(BaseEntity):
                             angle = (i / 8) * 2 * math.pi
                             barrier_dir = pygame.Vector2(math.cos(angle), math.sin(angle))
                             barrier_pos = self.rect.center + barrier_dir * self.barrier_radius
-                            barrier = Projectile(barrier_pos[0], barrier_pos[1], pygame.Vector2(0, 0), 'ranged', 15,
-                                                 0)  # Speed 0 = stationary
+                            barrier = Projectile(barrier_pos[0], barrier_pos[1], pygame.Vector2(0,0), 'ranged', 15, 0)  # Speed 0 = stationary
                             barrier.aoe_radius = 20  # Small damage circle
                             self.barrier_projectiles.append(barrier)
                         self.barrier_cooldown = 8.0  # Cooldown 8s
@@ -275,7 +255,7 @@ class Enemy(BaseEntity):
             player.take_damage(10)  # Damage placeholder khi chạm
 
         # Drop thóc khi chết (placeholder print)
-        if not self.alive and not hasattr(self, 'dropped'):
+        if not self.alive and not self.dropped:
             if random.random() < DROP_THO_RATE:
                 thoc = Resource(self.rect.centerx, self.rect.centery, random.randint(5, 20))
                 # Add to global resources list (placeholder in game_screen)

@@ -1,6 +1,5 @@
 # modules/entities/boss.py
 import math
-
 import pygame
 import random
 from modules.entities.enemy import Enemy
@@ -24,14 +23,15 @@ class Boss(Enemy):
         self.phase = 1  # Phase 1 base
         self.phase_thresholds = [0.5, 0.2]  # Change tại 50%, 20% HP
         self.minions = []  # List minions summon
+        self.projectiles = []  # List projectiles (spear)
         self.attack_cooldown = 0  # Cooldown attacks
         self.dash_duration = 0  # Thời gian dash temp
         self.dash_multiplier = 2.0  # Tăng speed x2 khi dash
         self.spear_damage = 40  # Sát thương thương
         self.spear_speed = 12  # Tốc độ spear proj
-        self.spear_length = 100  # Range dài (extend hitbox hoặc proj size)
-        self.charge_cooldown_base = 3.0  # Cooldown charge base (giảm phase 2)
-        self.rage_mult = 1.5  # Tăng damage/speed phase 3
+        self.spear_length = 100  # Range dài
+        self.charge_cooldown_base = 3.0  # Cooldown base
+        self.rage_mult = 1.5  # Tăng phase 3
 
     def update(self, delta_time, player=None):
         """
@@ -44,7 +44,6 @@ class Boss(Enemy):
         if hp_ratio < self.phase_thresholds[0] and self.phase < 2:
             self.phase = 2
             self.speed *= 1.5  # Tăng tốc phase 2
-            # New skill placeholder
         elif hp_ratio < self.phase_thresholds[1] and self.phase < 3:
             self.phase = 3
             self.speed *= 1.2  # Thêm tốc
@@ -61,40 +60,27 @@ class Boss(Enemy):
                 if self.phase == 1:
                     # Phase 1: Base charge + spear
                     self.dash_duration = 1.0
-                    spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage,
-                                       self.spear_speed)
-                    spear.rect.width = self.spear_length  # Long spear
+                    spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage, self.spear_speed, length=self.spear_length)
                     self.projectiles.append(spear)
                     self.attack_cooldown = self.charge_cooldown_base
 
                 elif self.phase == 2:
-                    # Phase 2: Frequent charge (cooldown giảm), double spear
-                    self.dash_duration = 1.5  # Dash lâu hơn
-                    for i in [-0.1, 0.1]:  # Double spear spread
-                        offset_dir = base_dir.rotate(i * 30)  # Spread 30 độ
-                        spear = Projectile(self.rect.centerx, self.rect.centery, offset_dir, 'ranged',
-                                           self.spear_damage, self.spear_speed)
-                        spear.rect.width = self.spear_length
+                    # Phase 2: Frequent charge, double spear
+                    self.dash_duration = 1.5
+                    for i in [-0.1, 0.1]:
+                        offset_dir = base_dir.rotate(i * 30)
+                        spear = Projectile(self.rect.centerx, self.rect.centery, offset_dir, 'ranged', self.spear_damage, self.spear_speed, length=self.spear_length)
                         self.projectiles.append(spear)
-                    self.attack_cooldown = self.charge_cooldown_base * 0.7  # Cooldown ngắn hơn
+                    self.attack_cooldown = self.charge_cooldown_base * 0.7
 
                 elif self.phase == 3:
-                    # Phase 3: Rage - tăng damage/speed, summon on charge
+                    # Phase 3: Rage, summon on charge
                     self.dash_duration = 2.0
                     self.spear_damage *= self.rage_mult
-                    spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage,
-                                       self.spear_speed * self.rage_mult)
-                    spear.rect.width = self.spear_length * 1.5
+                    spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage, self.spear_speed * self.rage_mult, length=self.spear_length * 1.5)
                     self.projectiles.append(spear)
-                    self.summon_minions(2)  # Summon thêm mỗi charge
-                    self.attack_cooldown = self.charge_cooldown_base * 0.5  # Rất nhanh
-
-        # Update projectiles (thêm vào sau minions update)
-        for proj in self.projectiles[:]:
-            proj.update(delta_time)
-            proj.check_collision([player])
-            if not proj.alive:
-                self.projectiles.remove(proj)
+                    self.summon_minions(2)
+                    self.attack_cooldown = self.charge_cooldown_base * 0.5
 
         if self.attack_cooldown > 0:
             self.attack_cooldown -= delta_time
@@ -104,9 +90,16 @@ class Boss(Enemy):
             self.dash_duration -= delta_time
             self.speed *= self.dash_multiplier
             if self.dash_duration <= 0:
-                self.speed /= self.dash_multiplier  # Reset speed
+                self.speed /= self.dash_multiplier
 
-        # Update minions (như projectiles)
+        # Update projectiles
+        for proj in self.projectiles[:]:
+            proj.update(delta_time)
+            proj.check_collision([player])
+            if not proj.alive:
+                self.projectiles.remove(proj)
+
+        # Update minions
         for minion in self.minions[:]:
             minion.update(delta_time, player)
             if not minion.alive:
@@ -122,11 +115,11 @@ class Boss(Enemy):
             self.minions.append(minion)
 
     def draw(self, screen):
-        """Override draw: Vẽ boss lớn, minions."""
+        """Override draw: Vẽ boss lớn, minions, projectiles."""
         super().draw(screen)
         # Vẽ minions
         for minion in self.minions:
             minion.draw(screen)
-
+        # Vẽ projectiles
         for proj in self.projectiles:
             proj.draw(screen)

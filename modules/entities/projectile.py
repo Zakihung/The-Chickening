@@ -7,11 +7,21 @@ from modules.utils.constants import (
 )
 from modules.utils.helpers import rect_collision
 
-
 class Projectile(BaseEntity):
     def __init__(self, x, y, direction, proj_type='ranged', damage=15, speed=10, aoe_radius=0, length=10):
-        width, height = (10, 10) if proj_type == 'ranged' else (50, 50)
-        super().__init__(x, y, width, height, hp=1, speed=speed)
+        """
+        Class cho đạn: lông (ranged) hoặc trứng (bomb).
+        :param x, y: Vị trí spawn
+        :param direction: Vector2 hướng bay
+        :param proj_type: 'ranged' hoặc 'bomb'
+        :param damage: Sát thương
+        :param speed: Tốc độ bay
+        :param aoe_radius: Cho bomb explode (từ constants)
+        :param length: Chiều dài cho spear (ranged)
+        """
+        width = length if proj_type == 'ranged' else 50
+        height = 10 if proj_type == 'ranged' else 50
+        super().__init__(x, y, width, height, hp=1, speed=speed)  # HP=1 để dễ destroy
         self.direction = direction.normalize() if direction.length() > 0 else pygame.Vector2(1, 0)
         self.type = proj_type
         self.damage = damage
@@ -19,14 +29,13 @@ class Projectile(BaseEntity):
         self.explode_timer = 2.0 if proj_type == 'bomb' else 0  # Delay explode cho bomb
         self.exploded = False
         self.image = None  # Load sprite sau (feather.png hoặc egg.png)
-        width = length if proj_type == 'ranged' else 10  # Spear long
-        self.rect = pygame.Rect(x - width / 2, y - 5, width, 10)
 
         # Placeholder image: Circle/vuông
         if proj_type == 'ranged':
-            pygame.draw.circle(self.image if self.image else pygame.Surface((10,10)), COLOR_YELLOW, (5,5), 5)
+            # Draw long rect for spear
+            pass
         else:
-            # Bomb placeholder rect
+            # Bomb placeholder
             pass
 
     def update(self, delta_time):
@@ -36,7 +45,7 @@ class Projectile(BaseEntity):
         if not self.alive:
             return
 
-        super().update(delta_time)  # Base movement (dùng self.direction và speed)
+        super().update(delta_time)  # Base movement
 
         # Explode logic cho bomb
         if self.type == 'bomb':
@@ -44,7 +53,6 @@ class Projectile(BaseEntity):
             if self.explode_timer <= 0 and not self.exploded:
                 self.exploded = True
                 self.alive = False  # Self-destroy sau explode
-                # TODO: Apply AOE damage trong aoe_radius
 
         # Remove nếu out screen
         if not (0 < self.rect.centerx < SCREEN_WIDTH and 0 < self.rect.centery < SCREEN_HEIGHT):
@@ -54,7 +62,7 @@ class Projectile(BaseEntity):
         """
         Draw: Sprite hoặc placeholder, circle AOE nếu exploded.
         """
-        super().draw(screen)  # Base draw (rect nếu no image)
+        super().draw(screen)  # Base draw
 
         color = COLOR_YELLOW if self.type == 'ranged' else (255, 100, 0)  # Cam cho bomb
         if self.image:
