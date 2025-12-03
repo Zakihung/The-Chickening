@@ -3,9 +3,8 @@ import pygame
 from modules.entities.base_entity import BaseEntity
 from modules.utils.constants import (
     PLAYER_HP_DEFAULT, PLAYER_SPEED_DEFAULT, EGGNERGY_MAX, DODGE_COOLDOWN,
-    SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, COLOR_BLACK, COLOR_RED
+    SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, COLOR_BLACK, COLOR_RED, MELEE_RANGE, PLAYER_DAMAGE_DEFAULT, RANGED_RANGE,
 )
-from modules.utils.constants import MELEE_RANGE, PLAYER_DAMAGE_DEFAULT
 
 class Player(BaseEntity):
     def __init__(self):
@@ -48,6 +47,10 @@ class Player(BaseEntity):
         self.melee_duration = 0  # Duration active hitbox (short, 0.2s)
         self.melee_damage = PLAYER_DAMAGE_DEFAULT  # Sát thương từ constants
         self.melee_hitbox = None  # Rect cho hitbox attack
+        self.ranged_cooldown = 0  # Cooldown bắn (seconds, ví dụ 0.3s)
+        self.ranged_cost = 10  # Eggnergy consume mỗi shot
+        self.ranged_damage = 15  # Sát thương trung bình
+        self.projectiles = []  # List placeholder cho projectiles (dict với position, direction)
 
     def update(self, delta_time, keys):
         """
@@ -99,6 +102,40 @@ class Player(BaseEntity):
                 )
                 # TODO: Check collision với enemies và apply damage (khi có enemy)
 
+        # Ranged attack logic (key K)
+        if keys[pygame.K_k] and self.ranged_cooldown <= 0 and self.eggnergy >= self.ranged_cost:
+            # Bắt đầu ranged nếu có direction
+            if self.direction.length() > 0:
+                self.ranged_cooldown = 0.3  # 0.3s cooldown
+                self.eggnergy -= self.ranged_cost
+                # Tạo projectile placeholder (dict với rect, direction, speed)
+                proj_speed = 10  # Pixels/frame
+                proj_rect = pygame.Rect(self.rect.centerx, self.rect.centery, 10, 10)  # Small rect
+                proj_dir = self.direction.normalize()  # Hướng bắn
+                self.projectiles.append({'rect': proj_rect, 'dir': proj_dir, 'speed': proj_speed})
+                # TODO: Tích hợp projectile.py sau, check collision với enemies
+
+        # Update cooldown
+        if self.ranged_cooldown > 0:
+            self.ranged_cooldown -= delta_time
+
+        # Update projectiles placeholder (di chuyển, remove nếu out screen)
+        for proj in self.projectiles[:]:
+            # Di chuyển projectile
+            proj['rect'].x += proj['dir'].x * proj['speed']
+            proj['rect'].y += proj['dir'].y * proj['speed']
+
+            # Tính khoảng cách đã bay từ vị trí bắn ban đầu
+            distance_traveled = (
+                                        (proj['rect'].centerx - self.rect.centerx) ** 2 +
+                                        (proj['rect'].centery - self.rect.centery) ** 2
+                                ) ** 0.5
+
+            # Nếu vượt quá tầm bắn HOẶC ra khỏi màn hình → xóa
+            if distance_traveled > RANGED_RANGE or \
+                    not (0 < proj['rect'].centerx < SCREEN_WIDTH and 0 < proj['rect'].centery < SCREEN_HEIGHT):
+                self.projectiles.remove(proj)
+
         # Update timers
         if self.melee_duration > 0:
             self.melee_duration -= delta_time
@@ -124,6 +161,10 @@ class Player(BaseEntity):
 
         if self.melee_hitbox:
             pygame.draw.rect(screen, COLOR_RED, self.melee_hitbox, 2)
+
+        # Vẽ projectiles placeholder (vòng tròn vàng)
+        for proj in self.projectiles:
+            pygame.draw.circle(screen, COLOR_YELLOW, proj['rect'].center, 5)
 
         # Vẽ eggnergy bar (giữ nguyên)
         energy_ratio = self.eggnergy / EGGNERGY_MAX
