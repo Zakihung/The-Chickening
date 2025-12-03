@@ -94,6 +94,7 @@ class Enemy(BaseEntity):
 
                     # Attack nếu trong range (placeholder damage)
                     if dist < self.attack_range and not player.invincible:
+                        # self.sound_manager.play_sfx('auu')
                         player.take_damage(self.attack_damage)
                         # Cooldown attack sau
 
@@ -177,6 +178,7 @@ class Enemy(BaseEntity):
 
                     # Attack melee nếu gần và facing_player=False (back attack?)
                     if dist < self.attack_range and not self.facing_player and not player.invincible:
+                        # self.sound_manager.play_sfx('auu')
                         player.take_damage(self.attack_damage * 1.5)  # Stronger back attack
 
                     self.speed = ENEMY_SPEED_BASE * 0.8  # Chậm hơn vì giáp nặng
@@ -252,6 +254,7 @@ class Enemy(BaseEntity):
 
         # Check collision với player (apply damage nếu chạm)
         if player and rect_collision(self.rect, player.rect) and not player.invincible:
+            # self.sound_manager.play_sfx('auu')
             player.take_damage(10)  # Damage placeholder khi chạm
 
         # Drop thóc khi chết (placeholder print)

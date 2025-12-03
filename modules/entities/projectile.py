@@ -51,6 +51,7 @@ class Projectile(BaseEntity):
         if self.type == 'bomb':
             self.explode_timer -= delta_time
             if self.explode_timer <= 0 and not self.exploded:
+                # self.sound_manager.play_sfx('explosion')
                 self.exploded = True
                 self.alive = False  # Self-destroy sau explode
 

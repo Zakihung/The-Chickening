@@ -84,6 +84,7 @@ class Player(BaseEntity):
 
         # Dodge roll logic
         if keys[pygame.K_SPACE] and self.dodge_cooldown_timer <= 0 and self.dodge_duration <= 0:
+            # self.sound_manager.play_sfx('cluck', 0.8)
             if self.direction.length() > 0:
                 self.dodge_duration = 0.5  # 0.5s dodge active
                 self.dodge_cooldown_timer = DODGE_COOLDOWN / 1000.0  # 1s cooldown
@@ -101,7 +102,7 @@ class Player(BaseEntity):
 
         # Melee attack logic (key J)
         if keys[pygame.K_j] and self.melee_cooldown <= 0 and self.melee_duration <= 0:
-            # self.sound_manager.play_sfx('cluck')
+            # self.sound_manager.play_sfx('cluck', 0.8)
             if self.direction.length() > 0:
                 self.melee_duration = 0.2  # 0.2s active
                 self.melee_cooldown = 0.5  # 0.5s cooldown
@@ -129,6 +130,7 @@ class Player(BaseEntity):
 
         # Ranged attack logic (key K)
         if keys[pygame.K_k] and self.ranged_cooldown <= 0 and self.eggnergy >= self.ranged_cost:
+            # self.sound_manager.play_sfx('cluck', 0.8)
             if self.direction.length() > 0:
                 self.ranged_cooldown = 0.3
                 self.eggnergy -= self.ranged_cost
@@ -141,6 +143,7 @@ class Player(BaseEntity):
 
         # Bomb attack logic (key L)
         if keys[pygame.K_l] and self.bomb_cooldown <= 0 and self.bomb_current > 0:
+            # self.sound_manager.play_sfx('cluck', 0.8)
             self.bomb_cooldown = 1.0
             self.bomb_current -= 1
             start_x, start_y = self.rect.center

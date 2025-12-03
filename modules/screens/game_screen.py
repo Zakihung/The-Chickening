@@ -15,6 +15,7 @@ class GameScreen:
         self.resources = []  # List Resource
         # self.sound_manager = SoundManager()
         # self.sound_manager.play_music('music_wave.mp3', 0.5)  # Loop music
+        # self.sound_manager.play_music('music_wave.mp3')  # Loop with fade
 
     def update(self, delta_time, keys):
         """Update entities với delta_time và keys."""

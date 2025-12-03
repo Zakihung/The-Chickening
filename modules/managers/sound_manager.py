@@ -11,6 +11,8 @@ class SoundManager:
         self.sounds = {}  # Dict SFX: 'cluck': sound obj
         self.music = None  # Current music
         self.load_sounds()
+        self.music_volume = 0.5  # Default music vol
+        self.sfx_volume = 1.0  # Default SFX vol
 
     def load_sounds(self):
         """Load all sounds từ assets."""
@@ -23,14 +25,21 @@ class SoundManager:
         except pygame.error as e:
             print(f"Error loading sounds: {e}")
 
-    def play_sfx(self, sfx_name, volume=1.0):
-        """Play SFX với volume (0-1)."""
-        if sfx_name in self.sounds:
-            self.sounds[sfx_name].set_volume(volume)
-            self.sounds[sfx_name].play()
+    def play_sfx(self, name, volume=None):
+        if name in self.sounds:
+            if volume is None:
+                volume = self.sfx_volume
+            self.sounds[name].set_volume(volume)
+            self.sounds[name].play()
 
-    def play_music(self, loop=-1):
-        """Play music loop (-1 infinite)."""
-        if self.music:
-            pygame.mixer.music.load(self.music)
-            pygame.mixer.music.play(loop)
+    def stop_music(self, fade_ms=500):
+        pygame.mixer.music.fadeout(fade_ms)
+
+    def play_music(self, file, volume=None, loop=-1, fade_ms=500):
+        """Play music loop with fade."""
+        if volume is None:
+            volume = self.music_volume
+        pygame.mixer.music.fadeout(fade_ms)  # Fade out current
+        pygame.mixer.music.load(SOUNDS_PATH + file)
+        pygame.mixer.music.set_volume(volume)
+        pygame.mixer.music.play(loop, fade_ms=fade_ms)

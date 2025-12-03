@@ -98,6 +98,8 @@ class LevelManager:
         """Next level logic."""
         self.current_level += 1
         self.is_boss_level = (self.current_level % 5 == 0)
+        # self.sound_manager.stop_music()  # Fade out on level change
+        # self.sound_manager.play_music('music_wave.mp3')  # Play new (placeholder same)
         if self.current_level < self.max_levels:
             self.load_level(self.current_level)
         else:
