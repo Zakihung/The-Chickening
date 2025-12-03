@@ -4,7 +4,8 @@ import random
 
 from modules.entities.base_entity import BaseEntity
 from modules.entities.enemy import Enemy
-from modules.utils.constants import WAVE_COUNT_PER_LEVEL
+from modules.utils.constants import ( WAVE_COUNT_PER_LEVEL, SCREEN_WIDTH, SCREEN_HEIGHT)
+from modules.entities.boss import Boss  # Để spawn boss
 from modules.utils.helpers import rect_collision
 
 class LevelManager:
@@ -21,6 +22,8 @@ class LevelManager:
         self.spawn_points = []  # List destructible spawns (BaseEntity hp)
         self.wave_timer = 0  # Timer spawn wave
         self.load_level(self.current_level)
+        self.max_levels = len(self.levels_data)  # Total levels từ json
+        self.is_boss_level = False  # Flag boss every 5
 
     def load_level(self, level_id):
         """Load data level từ json."""
@@ -36,6 +39,23 @@ class LevelManager:
             self.boss = level['boss']  # None hoặc dict
             self.current_wave = 0
             self.enemies.clear()
+
+        if level['boss']:
+            self.is_boss_level = True
+        else:
+            self.is_boss_level = False
+
+    def next_level(self):
+        self.current_level += 1
+        if self.current_level % 5 == 0:
+            self.is_boss_level = True
+        else:
+            self.is_boss_level = False
+        if self.current_level < self.max_levels:
+            self.load_level(self.current_level)
+        else:
+            # Game win placeholder
+            print("All levels cleared!")
 
     def update(self, delta_time, player):
         """Update waves, spawn enemies, check clear."""
@@ -78,6 +98,19 @@ class LevelManager:
             self.current_level += 1
             self.load_level(self.current_level)
             print("Level cleared!")  # Placeholder
+
+        # Check clear
+        if len(self.enemies) == 0 and len(self.spawn_points) == 0 and self.current_wave >= len(self.waves):
+            if self.is_boss_level and self.boss and len(self.boss.minions) == 0 and self.boss.hp <= 0:
+                self.next_level()
+            elif not self.is_boss_level:
+                self.next_level()
+
+        # Boss spawn nếu boss level
+        if self.is_boss_level and not self.enemies and self.boss:
+            boss_data = self.boss
+            boss = Boss(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, boss_data['type'])  # Spawn center
+            self.enemies.append(boss)  # Treat boss as enemy
 
     def draw(self, screen):
         """Draw enemies/spawns."""
