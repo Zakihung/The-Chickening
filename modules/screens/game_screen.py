@@ -3,6 +3,7 @@ import pygame
 from modules.utils.constants import SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_GREEN
 from modules.entities.player import Player
 from modules.managers.level_manager import LevelManager
+from modules.managers.sound_manager import SoundManager
 
 class GameScreen:
     def __init__(self, screen):
@@ -12,6 +13,8 @@ class GameScreen:
         self.level_manager = LevelManager()
         self.player.enemies = self.level_manager.enemies  # Link to level enemies for collision
         self.resources = []  # List Resource
+        # self.sound_manager = SoundManager()
+        # self.sound_manager.play_music('music_wave.mp3', 0.5)  # Loop music
 
     def update(self, delta_time, keys):
         """Update entities với delta_time và keys."""

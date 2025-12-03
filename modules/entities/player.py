@@ -101,6 +101,7 @@ class Player(BaseEntity):
 
         # Melee attack logic (key J)
         if keys[pygame.K_j] and self.melee_cooldown <= 0 and self.melee_duration <= 0:
+            # self.sound_manager.play_sfx('cluck')
             if self.direction.length() > 0:
                 self.melee_duration = 0.2  # 0.2s active
                 self.melee_cooldown = 0.5  # 0.5s cooldown
