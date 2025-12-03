@@ -5,6 +5,8 @@ from modules.entities.base_entity import BaseEntity
 from modules.utils.constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_YELLOW, BOMB_AOE_RADIUS, BOMB_DAMAGE
 )
+from modules.utils.helpers import rect_collision
+
 
 class Projectile(BaseEntity):
     def __init__(self, x, y, direction, proj_type='ranged', damage=15, speed=10, aoe_radius=0):
@@ -61,3 +63,24 @@ class Projectile(BaseEntity):
         # Vẽ AOE nếu exploded
         if self.exploded:
             pygame.draw.circle(screen, (255, 0, 0), self.rect.center, self.aoe_radius, 3)
+
+    def check_collision(self, entities):
+        """
+        Check collision với list entities, apply damage nếu hit.
+        :param entities: List BaseEntity để check (e.g., enemies)
+        """
+        hit_entities = []
+        for entity in entities:
+            if self.alive and entity.alive and entity != self:  # Không hit self
+                if self.type == 'ranged':
+                    if rect_collision(self.rect, entity.rect):
+                        entity.take_damage(self.damage)
+                        self.alive = False  # Destroy proj sau hit
+                        hit_entities.append(entity)
+                elif self.type == 'bomb' and self.exploded:
+                    # AOE check: Distance < radius
+                    dist = math.hypot(self.rect.centerx - entity.rect.centerx, self.rect.centery - entity.rect.centery)
+                    if dist <= self.aoe_radius:
+                        entity.take_damage(self.damage)
+                        hit_entities.append(entity)
+        return hit_entities  # Để sound/effect sau

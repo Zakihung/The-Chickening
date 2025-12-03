@@ -57,6 +57,7 @@ class Player(BaseEntity):
         self.bomb_current = self.bomb_max  # Số bomb hiện có
         self.bombs = []  # List placeholder cho bombs (dict với rect, timer explode, exploded flag)
         self.bomb_explode_delay = 2  # 2s delay trước explode
+        self.enemies = []  # Placeholder list enemies để test collision (sẽ từ level_manager sau)
 
     def update(self, delta_time, keys):
         """
@@ -136,6 +137,19 @@ class Player(BaseEntity):
             if distance_traveled > RANGED_RANGE or \
                     not (0 < proj['rect'].centerx < SCREEN_WIDTH and 0 < proj['rect'].centery < SCREEN_HEIGHT):
                 self.projectiles.remove(proj)
+
+        for proj in self.projectiles[:]:
+            proj.update(delta_time)
+            # Check collision với placeholder enemies
+            proj.check_collision(self.enemies)  # Pass list enemies
+            if not proj.alive:
+                self.projectiles.remove(proj)
+
+        self.bomb_regen_timer = getattr(self, 'bomb_regen_timer', 0)
+        self.bomb_regen_timer += delta_time
+        if self.bomb_regen_timer >= 10 and self.bomb_current < self.bomb_max:
+            self.bomb_current += 1
+            self.bomb_regen_timer = 0
 
         # Bomb attack logic (key L)
         if keys[pygame.K_l] and self.bomb_cooldown <= 0 and self.bomb_current > 0:
