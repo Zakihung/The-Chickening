@@ -112,6 +112,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Drop: Khi chết, random drop thóc dựa DROP_THO_RATE (print tạm).
   - Type: Placeholder cho override (e.g., 'runner' zig-zag sau).
 - Ngày 25: Thêm AI cho loại cáo chạy nhanh (type 'runner' - zig-zag áp sát) trong enemy.py. Chúng ta sẽ override update() để nếu có player target, enemy di chuyển zig-zag (lắc lư sin wave) hướng tới player, tốc độ nhanh (từ constants), và giữ distance ngắn để attack (cào vuốt placeholder).
+- Ngày 26: Thêm AI cho cáo cung thủ (type 'archer' - giữ khoảng cách, bắn tên) trong enemy.py. Chúng ta sẽ refine update() để enemy giữ khoảng cách an toàn (ví dụ: 200-300 pixels từ player), né khi player quá gần (di chuyển ngược direction), và bắn tên (spawn Projectile ranged hướng tới player với cooldown ngắn). Điều này dựa trên gameplay (cáo cung thủ: giữ khoảng cách, né khi gà đến gần, bắn tên - dùng Projectile class để arrow như lông của player).
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
