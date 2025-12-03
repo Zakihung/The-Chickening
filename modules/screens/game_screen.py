@@ -3,52 +3,36 @@ import pygame
 from modules.utils.constants import SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_GREEN
 from modules.entities.player import Player
 from modules.managers.level_manager import LevelManager
-from modules.managers.sound_manager import SoundManager
-from modules.managers.item_manager import ItemManager
-from modules.skills import Skills
 
 class GameScreen:
-    def __init__(self, screen):
+    def __init__(self, screen, sound_manager):
         self.screen = screen
         self.background_color = COLOR_GREEN
-        self.player = Player()
+        self.player = Player(sound_manager)
         self.level_manager = LevelManager()
-        self.player.enemies = self.level_manager.enemies  # Link to level enemies for collision
-        self.resources = []  # List Resource
-        # self.sound_manager = SoundManager()
-        # self.sound_manager.play_music('music_wave.mp3', 0.5)  # Loop music
-        # self.sound_manager.play_music('music_wave.mp3')  # Loop with fade
-        self.item_manager = ItemManager()
-        # Test equip
-        self.item_manager.equip_item(self.player, 1)  # Test equip id1
-        self.skills = Skills()
-        # Test multiple upgrades roguelite
-        self.skills.choose_branch(self.player, 'ranged')
-        for _ in range(3):  # 3 upgrades
-            selected = self.skills.upgrade_skill_tree(self.player)
-            if selected:
-                print(f"Applied {selected['name']}")
+        self.player.enemies = self.level_manager.enemies
+        self.resources = []
+        # self.sound_manager = sound_manager
+        # self.sound_manager.play_music('music_wave.mp3')
 
     def update(self, delta_time, keys):
-        """Update entities với delta_time và keys."""
         self.player.update(delta_time, keys)
         self.level_manager.update(delta_time, self.player)
 
-        # Update resources
         for res in self.resources[:]:
             res.update(delta_time, self.player)
             if not res.alive:
                 self.resources.remove(res)
-        # Add dropped from player die
         self.resources.extend(self.player.dropped_resources)
         self.player.dropped_resources.clear()
 
-        # Test damage nếu không invincible (optional)
         if not self.player.invincible:
-            self.player.take_damage(0.1)  # Test HP giảm chậm
+            self.player.take_damage(0.1)  # Test, remove later
 
     def draw_background(self):
-        self.level_manager.draw(self.screen)  # Draw bg/obs/enemies/spawns
+        self.screen.fill(self.background_color)
+        self.level_manager.draw(self.screen)
         self.player.draw(self.screen)
         for res in self.resources:
             res.draw(self.screen)
+        pygame.draw.rect(self.screen, (0, 100, 0), (0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100))  # Grass placeholder

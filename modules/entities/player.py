@@ -12,75 +12,63 @@ from modules.utils.helpers import rect_collision
 from modules.entities.resource import Resource
 
 class Player(BaseEntity):
-    def __init__(self):
-        """
-        Class cho nhân vật chính: Gà con.
-        Kế thừa từ BaseEntity, set vị trí giữa màn, load sprite.
-        """
+    def __init__(self, sound_manager=None):
         super().__init__(
-            x=SCREEN_WIDTH // 2 - 50,  # Trung tâm x
-            y=SCREEN_HEIGHT // 2 - 50,  # Trung tâm y
-            width=100, height=100,  # Kích thước placeholder, adjust sau
+            x=SCREEN_WIDTH // 2 - 50,
+            y=SCREEN_HEIGHT // 2 - 50,
+            width=100, height=100,
             hp=PLAYER_HP_DEFAULT,
             speed=PLAYER_SPEED_DEFAULT
         )
-        # Load sprite (thay chicken.png bằng sprite thực sau)
         try:
             self.image = pygame.image.load('assets/images/player/chicken.png')
-            self.image = pygame.transform.scale(self.image, (100, 100))  # Scale phù hợp
+            self.image = pygame.transform.scale(self.image, (100, 100))
             self.rect = self.image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-            self.original_image = self.image  # Lưu bản gốc để flip
+            self.original_image = self.image
         except pygame.error as e:
             print(f"Error loading player sprite: {e}")
-            self.image = None  # Fallback to placeholder
+            self.image = None
 
-        # Thuộc tính player-specific
-        self.eggnergy = EGGNERGY_MAX  # Năng lượng cho bắn lông
-        self.invincible = False  # Flag invincible trong dodge
-        self.dodge_speed_multiplier = 2  # Tăng speed gấp 2 khi dodge
-        self.dodge_duration = 0  # Timer duration (seconds)
-        self.dodge_cooldown_timer = 0  # Timer cooldown (seconds)
-        self.melee_cooldown = 0  # Cooldown attack (seconds)
-        self.melee_duration = 0  # Duration active hitbox (short, 0.2s)
-        self.melee_damage = PLAYER_DAMAGE_DEFAULT  # Sát thương từ constants
-        self.melee_hitbox = None  # Rect cho hitbox attack
-        self.ranged_cooldown = 0  # Cooldown bắn (seconds)
-        self.ranged_cost = 10  # Eggnergy consume mỗi shot
-        self.projectiles = []  # List Projectile instances
-        self.bomb_cooldown = 0  # Cooldown đẻ bomb (seconds)
-        self.bomb_max = BOMB_LIMIT  # Limit max từ constants (3)
-        self.bomb_current = self.bomb_max  # Số bomb hiện có
-        self.bomb_regen_timer = 0  # Timer regen bomb
-        self.enemies = []  # List enemies để check collision
-        self.thoc_collected = 0  # Thóc nhặt giữa trận
-        self.thoc_stored = 0  # Thóc đã cất an toàn
-        self.dropped_resources = []  # List Resource drop khi die (tạm)
-        self.equipped_items = []  # List id equipped
-        self.armor = 0  # For armor_bonus
-        self.burn_damage = 0  # For synergy
-        self.equipped_slots = {'weapon': None, 'armor': None, 'accessory': None, 'boots': None}  # Slots per type
-        self.base_melee_damage = PLAYER_DAMAGE_DEFAULT  # Base to reverse
-        self.base_speed = PLAYER_SPEED_DEFAULT  # Etc for reverse
-        self.burn_damage = 0  # For synergy
-        # Add more for effects
-        self.unlocked_skills = []  # List skill ids
-        self.crit_rate = 0.0  # For ranged crit
-        # Add more: pierce = False, stun_chance = 0
-        self.branch = None  # Chosen branch
+        self.eggnergy = EGGNERGY_MAX
+        self.invincible = False
+        self.dodge_speed_multiplier = 2
+        self.dodge_duration = 0
+        self.dodge_cooldown_timer = 0
+        self.melee_cooldown = 0
+        self.melee_duration = 0
+        self.melee_damage = PLAYER_DAMAGE_DEFAULT
+        self.melee_hitbox = None
+        self.ranged_cooldown = 0
+        self.ranged_cost = 10
+        self.projectiles = []
+        self.bomb_cooldown = 0
+        self.bomb_max = BOMB_LIMIT
+        self.bomb_current = self.bomb_max
+        self.bomb_regen_timer = 0
+        self.enemies = []
+        self.thoc_collected = 0
+        self.thoc_stored = 0
+        self.dropped_resources = []
+        self.equipped_items = []
+        self.armor = 0
+        self.burn_damage = 0
+        self.equipped_slots = {'weapon': None, 'armor': None, 'accessory': None, 'boots': None}
+        self.inventory = []  # List item_ids not equipped
+        self.base_melee_damage = PLAYER_DAMAGE_DEFAULT
+        self.base_speed = PLAYER_SPEED_DEFAULT
+        self.unlocked_skills = []
+        self.crit_rate = 0.0
+        self.branch = None
         self.armor_mult = 1.0
         self.ranged_pierce = 0
         self.bomb_aoe_radius = BOMB_AOE_RADIUS
         self.bomb_stun = 0.0
-        self.upgrade_levels = {'melee': 0, 'ranged': 0, 'bomb': 0}  # Per branch levels
+        self.upgrade_levels = {'melee': 0, 'ranged': 0, 'bomb': 0}
+        self.sound_manager = sound_manager
 
     def update(self, delta_time, keys):
-        """
-        Override update: Xử lý input di chuyển, attacks, dodge.
-        :param keys: pygame.key.get_pressed() để check input
-        """
         super().update(delta_time)
 
-        # Xử lý input di chuyển
         self.direction = pygame.Vector2(0, 0)
         if keys[pygame.K_w] or keys[pygame.K_UP]:
             self.direction.y -= 1
@@ -88,27 +76,23 @@ class Player(BaseEntity):
             self.direction.y += 1
         if keys[pygame.K_a] or keys[pygame.K_LEFT]:
             self.direction.x -= 1
-            # Flip sprite sang trái
             self.image = pygame.transform.flip(self.original_image, True, False)
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.direction.x += 1
-            # Flip sprite sang phải (gốc)
             self.image = self.original_image
 
-        # Normalize direction để tốc độ chéo = thẳng
         if self.direction.length_squared() > 0:
             self.direction.normalize_ip()
 
-        # Dodge roll logic
         if keys[pygame.K_SPACE] and self.dodge_cooldown_timer <= 0 and self.dodge_duration <= 0:
-            # self.sound_manager.play_sfx('cluck', 0.8)
             if self.direction.length() > 0:
-                self.dodge_duration = 0.5  # 0.5s dodge active
-                self.dodge_cooldown_timer = DODGE_COOLDOWN / 1000.0  # 1s cooldown
+                self.dodge_duration = 0.5
+                self.dodge_cooldown_timer = DODGE_COOLDOWN / 1000.0
                 self.invincible = True
-                self.speed *= self.dodge_speed_multiplier  # Tăng speed
+                self.speed *= self.dodge_speed_multiplier
+                if self.sound_manager:
+                    self.sound_manager.play_sfx('cluck', 0.8)
 
-        # Update dodge timers
         if self.dodge_duration > 0:
             self.dodge_duration -= delta_time
             if self.dodge_duration <= 0:
@@ -117,27 +101,24 @@ class Player(BaseEntity):
         if self.dodge_cooldown_timer > 0:
             self.dodge_cooldown_timer -= delta_time
 
-        # Melee attack logic (key J)
         if keys[pygame.K_j] and self.melee_cooldown <= 0 and self.melee_duration <= 0:
-            # self.sound_manager.play_sfx('cluck', 0.8)
             if self.direction.length() > 0:
-                self.melee_duration = 0.2  # 0.2s active
-                self.melee_cooldown = 0.5  # 0.5s cooldown
-                # Tạo hitbox phía trước theo direction
+                self.melee_duration = 0.2
+                self.melee_cooldown = 0.5
                 hitbox_offset = self.direction * MELEE_RANGE
                 self.melee_hitbox = pygame.Rect(
                     self.rect.centerx + hitbox_offset.x - 25,
                     self.rect.centery + hitbox_offset.y - 25,
-                    50, 50  # Kích thước hitbox nhỏ
+                    50, 50
                 )
+                if self.sound_manager:
+                    self.sound_manager.play_sfx('cluck', 0.8)
 
-        # Check melee collision với enemies
         if self.melee_hitbox:
             for enemy in self.enemies:
                 if rect_collision(self.melee_hitbox, enemy.rect):
-                    enemy.take_damage(self.melee_damage, self.rect.center)  # Pass pos for directional
+                    enemy.take_damage(self.melee_damage, self.rect.center)
 
-        # Update melee timers
         if self.melee_duration > 0:
             self.melee_duration -= delta_time
             if self.melee_duration <= 0:
@@ -145,22 +126,19 @@ class Player(BaseEntity):
         if self.melee_cooldown > 0:
             self.melee_cooldown -= delta_time
 
-        # Ranged attack logic (key K)
         if keys[pygame.K_k] and self.ranged_cooldown <= 0 and self.eggnergy >= self.ranged_cost:
-            # self.sound_manager.play_sfx('cluck', 0.8)
             if self.direction.length() > 0:
                 self.ranged_cooldown = 0.3
                 self.eggnergy -= self.ranged_cost
                 proj = Projectile(self.rect.centerx, self.rect.centery, self.direction, 'ranged', 15, 10)
                 self.projectiles.append(proj)
+                if self.sound_manager:
+                    self.sound_manager.play_sfx('cluck', 0.8)
 
-        # Update ranged cooldown
         if self.ranged_cooldown > 0:
             self.ranged_cooldown -= delta_time
 
-        # Bomb attack logic (key L)
         if keys[pygame.K_l] and self.bomb_cooldown <= 0 and self.bomb_current > 0:
-            # self.sound_manager.play_sfx('cluck', 0.8)
             self.bomb_cooldown = 1.0
             self.bomb_current -= 1
             start_x, start_y = self.rect.center
@@ -170,92 +148,67 @@ class Player(BaseEntity):
                 start_y += offset.y
             proj = Projectile(start_x, start_y, self.direction, 'bomb', BOMB_DAMAGE, 5, BOMB_AOE_RADIUS)
             self.projectiles.append(proj)
+            if self.sound_manager:
+                self.sound_manager.play_sfx('cluck', 0.8)
 
-        # Update bomb cooldown
         if self.bomb_cooldown > 0:
             self.bomb_cooldown -= delta_time
 
-        # Update projectiles
         for proj in self.projectiles[:]:
             proj.update(delta_time)
-            proj.check_collision(self.enemies)  # Check hit enemies
+            proj.check_collision(self.enemies)
             if not proj.alive:
                 self.projectiles.remove(proj)
 
-        # Regen bomb_current (mỗi 10s)
         self.bomb_regen_timer += delta_time
         if self.bomb_regen_timer >= 10 and self.bomb_current < self.bomb_max:
             self.bomb_current += 1
             self.bomb_regen_timer = 0
 
-        # Regen eggnergy
         self.eggnergy = min(self.eggnergy + 10 * delta_time, EGGNERGY_MAX)
 
         if self.hp <= 0 and self.alive:
             self.alive = False
             self.die()
-
-    def equip_item(self, item_id):
-        item = self.item_manager.get_item_by_id(item_id)  # Assume self.item_manager from game_screen pass
-        if item and item['type'] in self.equipped_slots:
-            if self.equipped_slots[item['type']]:
-                self.unequip_item(self.equipped_slots[item['type']])
-            self.equipped_slots[item['type']] = item_id
-            self.item_manager.equip_item(self, item_id)  # Apply
-
-    def unequip_item(self, item_id):
-        for slot, equipped_id in self.equipped_slots.items():
-            if equipped_id == item_id:
-                self.item_manager.unequip_item(self, item_id)  # Reverse
-                self.equipped_slots[slot] = None
-                break
+            # if self.sound_manager:
+            #     self.sound_manager.play_sfx('auu', 0.8)  # Player die sound
 
     def draw(self, screen):
-        """
-        Override draw: Vẽ player và thêm eggnergy bar, hiệu ứng dodge.
-        """
         if self.image and self.invincible:
-            # Hiệu ứng invincible: Tint đỏ (placeholder)
             tint_surface = self.image.copy()
             tint_surface.fill((255, 0, 0, 128), special_flags=pygame.BLEND_RGBA_MULT)
             screen.blit(tint_surface, self.rect.topleft)
         else:
-            super().draw(screen)  # Bình thường
+            super().draw(screen)
 
-        # Vẽ melee hitbox nếu active
         if self.melee_hitbox:
             pygame.draw.rect(screen, COLOR_RED, self.melee_hitbox, 2)
 
-        # Vẽ projectiles
         for proj in self.projectiles:
             proj.draw(screen)
 
-        # Vẽ eggnergy bar
         energy_ratio = self.eggnergy / EGGNERGY_MAX
         bar_width = self.rect.width * energy_ratio
-        energy_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 20, bar_width, 5)  # Dưới HP bar
+        energy_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 20, bar_width, 5)
         pygame.draw.rect(screen, COLOR_YELLOW, energy_bar_rect)
         full_bar_rect = pygame.Rect(self.rect.x, self.rect.y - 20, self.rect.width, 5)
         pygame.draw.rect(screen, COLOR_BLACK, full_bar_rect, 1)
 
     def store_thoc(self):
-        """Store thóc về chuồng (gọi khi vào safe zone)."""
         self.thoc_stored += self.thoc_collected
         self.thoc_collected = 0
 
     def die(self):
-        """Handle khi chết: Mất 50% thoc_collected, drop remaining."""
         if self.thoc_collected > 0:
             lost = int(self.thoc_collected * THOC_LOSS_ON_DEATH)
             remaining = self.thoc_collected - lost
             self.thoc_collected = 0
-            # Drop remaining as Resources around player
-            for _ in range(remaining // 5):  # Mỗi 5 thóc 1 Resource
+            for _ in range(remaining // 5):
                 drop_x = self.rect.centerx + random.randint(-50, 50)
                 drop_y = self.rect.centery + random.randint(-50, 50)
                 drop = Resource(drop_x, drop_y, 5)
                 self.dropped_resources.append(drop)
             print(f"Lost {lost} thóc! Dropped {remaining} to collect again.")
-        # Reset HP, position (placeholder)
         self.hp = self.max_hp
         self.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        self.alive = True  # Respawn
