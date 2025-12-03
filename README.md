@@ -34,7 +34,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   └── resource.py      `# Class Resource (thóc drops, collect, thoc_collected/stored, die lose 50% with drop)`
 - │   ├── managers/            `# Quản lý hệ thống`
 - │   │   ├── level_manager.py `# Quản lý waves, spawns, levels từ json, level progression, boss every 5 levels integration, maps with bg and obstacles per type`
-- │   │   ├── sound_manager.py `# Quản lý nhạc và SFX`
+- │   │   ├── sound_manager.py `# Quản lý load/play SFX/music`
 - │   │   └── item_manager.py  `# Quản lý items và synergies`
 - │   ├── screens/             `# Các màn hình/game states`
 - │   │   ├── main_menu.py     `# Menu chính`
@@ -139,6 +139,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - Ngày 37: Quản lý level progression trong level_manager.py (5-10 waves/level từ WAVE_COUNT_PER_LEVEL, auto next level khi clear, boss every 5 levels spawn Boss thay waves, update progression (current_level tăng, load next json)).
 - Ngày 38: Thêm boss every 5 levels đầy đủ trong level_manager.py (dựa current_level %5==0 spawn Boss thay waves, load boss data từ json nếu có, integrate summon minions, ensure clear when boss dead).
 - Ngày 39: Tạo maps (farm, forest, village, volcano, etc.) trong level_manager.py (load background image từ assets dựa map_type/background json, draw background, add simple obstacles/environment entities từ map_type - placeholder rect block movement/collision).
+- Ngày 40: Tạo file sound_manager.py trong modules/managers/ để load sounds (load SFX/music từ assets/sounds/, placeholder dict for sounds like cluck.wav, auu.wav, explosion.wav). Manager sẽ singleton-like, load on init, ready for play in Ngày 41.
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
