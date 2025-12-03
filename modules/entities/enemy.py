@@ -7,6 +7,7 @@ from modules.utils.constants import (
     ENEMY_HP_BASE, ENEMY_SPEED_BASE, COLOR_RED, DROP_THO_RATE, SCREEN_WIDTH, SCREEN_HEIGHT
 )
 from modules.utils.helpers import rect_collision  # Để collision sau
+from modules.entities.projectile import Projectile  # Để spawn arrow
 
 class Enemy(BaseEntity):
     def __init__(self, x, y, enemy_type='runner'):
@@ -35,6 +36,12 @@ class Enemy(BaseEntity):
         self.time = 0  # Timer cho sin wave
         self.attack_damage = 10  # Damage cào vuốt khi áp sát
         self.attack_range = 50  # Range để attack (placeholder)
+        self.min_distance = 200  # Khoảng cách min để né (né nếu player < min)
+        self.max_distance = 300  # Khoảng cách max để bắn (bắn nếu dist <= max)
+        self.shoot_cooldown = 0  # Cooldown bắn tên (seconds, ví dụ 1.5s)
+        self.arrow_damage = 20  # Sát thương tên
+        self.arrow_speed = 8  # Tốc độ tên
+        self.projectiles = []  # List Projectile cho arrows của enemy (tương tự player)
 
     def update(self, delta_time, player=None):
         """
@@ -73,6 +80,39 @@ class Enemy(BaseEntity):
                         angle = random.uniform(0, 2 * math.pi)
                         self.direction = pygame.Vector2(math.cos(angle), math.sin(angle))
                         self.direction_change_timer = random.uniform(1, 2)
+
+                if self.type == 'archer':
+                    # Archer AI: Giữ khoảng cách, né nếu gần, bắn nếu trong range
+                    if dist > 0:
+                        if dist < self.min_distance:
+                            # Né: Di chuyển ngược direction tới player
+                            self.direction = -base_dir
+                        elif dist > self.max_distance:
+                            # Áp sát nhẹ để vào range bắn
+                            self.direction = base_dir
+                        else:
+                            # Giữ vị trí, bắn
+                            self.direction = pygame.Vector2(0, 0)  # Dừng di chuyển
+                            if self.shoot_cooldown <= 0:
+                                # Spawn arrow hướng tới player
+                                arrow_dir = base_dir
+                                arrow = Projectile(self.rect.centerx, self.rect.centery, arrow_dir, 'ranged',
+                                                   self.arrow_damage, self.arrow_speed)
+                                self.projectiles.append(arrow)
+                                self.shoot_cooldown = 1.5  # Reset cooldown
+
+                    # Update cooldown
+                    if self.shoot_cooldown > 0:
+                        self.shoot_cooldown -= delta_time
+
+                    # Update projectiles của enemy (tương tự player)
+                    for proj in self.projectiles[:]:
+                        proj.update(delta_time)
+                        proj.check_collision([player])  # Check hit player (pass list [player])
+                        if not proj.alive:
+                            self.projectiles.remove(proj)
+
+
         else:
             # No player: Random AI
             self.direction_change_timer -= delta_time
