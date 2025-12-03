@@ -28,7 +28,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   ├── entities/            `# Các thực thể trong game`
 - │   │   ├── base_entity.py   `# Class base cho entities (position, HP, update với di chuyển delta_time, draw với HP bar)`
 - │   │   ├── player.py        `# Class Player (movement input handling, flip sprite, dodge placeholder)`
-- │   │   ├── enemy.py         `# Class Enemy base (AI behaviors)`
+- │   │   ├── enemy.py         `# Class Enemy base (AI random, zig-zag áp sát cho 'runner', collision damage)`
 - │   │   ├── boss.py          `# Class Boss (phases, special attacks)`
 - │   │   ├── projectile.py    `# Class Projectile (movement, explode, collision/damage handling)`
 - │   │   └── resource.py      `# Thóc và drops`
@@ -111,6 +111,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Collision: Check chạm player thì damage (nếu không invincible), placeholder.
   - Drop: Khi chết, random drop thóc dựa DROP_THO_RATE (print tạm).
   - Type: Placeholder cho override (e.g., 'runner' zig-zag sau).
+- Ngày 25: Thêm AI cho loại cáo chạy nhanh (type 'runner' - zig-zag áp sát) trong enemy.py. Chúng ta sẽ override update() để nếu có player target, enemy di chuyển zig-zag (lắc lư sin wave) hướng tới player, tốc độ nhanh (từ constants), và giữ distance ngắn để attack (cào vuốt placeholder).
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
