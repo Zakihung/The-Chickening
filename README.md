@@ -31,7 +31,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── enemy.py         `# Class Enemy base (AI random, zig-zag cho 'runner', giữ khoảng cách/bắn tên cho 'archer', ném bom diện rộng cho 'bomber', giáp shield weak back cho 'shield', pháp sư buff/barrier cho 'mage')`
 - │   │   ├── boss.py          `# Class Boss (phases đầy đủ cho Boss1: spear charge, frequent double, rage summon)`
 - │   │   ├── projectile.py    `# Class Projectile (movement, explode, collision/damage handling)`
-- │   │   └── resource.py      `# Class Resource (thóc drops, collect)`
+- │   │   └── resource.py      `# Class Resource (thóc drops, collect, thoc_collected/stored, die lose 50% with drop)`
 - │   ├── managers/            `# Quản lý hệ thống`
 - │   │   ├── level_manager.py `# Quản lý waves, spawns, maps`
 - │   │   ├── sound_manager.py `# Quản lý nhạc và SFX`
@@ -129,6 +129,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Update: Collide player thì add amount to player.thoc (thêm player.thoc = 0 trong player.py), remove self.
   - Draw: Circle vàng (sau load sprite).
   - Spawn: Sẽ gọi từ enemy/boss khi die.
+- Ngày 34: Tích hợp collect thóc với cơ chế rủi ro – thưởng (risk & reward). Player có thoc_collected (thóc nhặt giữa trận) và thoc_stored (thóc đã cất ở chuồng). Collect add to thoc_collected; khi die lose 50% thoc_collected (THOC_LOSS_ON_DEATH), drop remaining as Resource; quay về chuồng để store (thoc_stored += thoc_collected, reset collected).
 
 - Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
