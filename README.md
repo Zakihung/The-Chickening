@@ -162,19 +162,24 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - Ngày 50: Tích hợp main_menu vào game loop đầy đủ trong main.py (state machine 'menu'/'game'/'options'/'game_over', on esc/die back to menu, options placeholder with back button, quit exit clean).
 - Ngày 51-60: Tạo game_screen.py đầy đủ (tích hợp all entities/managers: player/enemies/boss/projectiles/resources/items/skills/sounds/level progression, update/draw all, handle states inside game like pause/safe_zone placeholder). 
   - Ngày 51: Integrate level_manager fully into game_screen (spawn/update/draw enemies/spawns/obstacles, player.enemies = level.enemies), remove test entities.
-  - Ngày 52: Tiếp tục part 2 - integrate player/projectiles into game_screen (update/draw player/projectiles, collision check in screen or manager, refine projectile spawn from player attacks). Focus clean code, no duplicate update.
+  - Ngày 52: Part 2 - integrate player/projectiles into game_screen (update/draw player/projectiles, collision check in screen or manager, refine projectile spawn from player attacks). Focus clean code, no duplicate update.
   - Ngày 53: Part 3 - integrate boss/minions into game_screen (boss as enemy in level_manager, minions update/draw from boss, ensure collision/damage with player/proj).
   - Ngày 54: Part 4 - integrate resources/thoc into game_screen (update/draw resources, collect add collected, die drop/loss, store_thoc on key/test).
   - Ngày 55: Part 5 - integrate items/equip into game_screen (item_manager in screen, random drop on enemy die add to inventory, equip on key/test, apply effects/synergies).
   - Ngày 55.9: Sửa lỗi các file
+  - Ngày 56: Part 6 - integrate skills/upgrade into game_screen (skills in screen, upgrade on level clear (call upgrade_skill_tree if player.branch, apply selected), choose branch on key B test, apply to player combat full).
+  - Ngày 57: Part 7 - integrate sounds on all events (pass sound_manager to entities/managers, trigger SFX on collect/drop/upgrade/level clear, music change on boss level).
+  - Ngày 58: Part 8 - add hud in game_screen (HP/energy/thoc counter text/bar, minimap placeholder rect show enemies/obs).
+  - Ngày 59: Part 9 - add pause/safe_zone in game_screen (key P pause (stop update, draw 'Paused'), key S to safe_zone state (store thóc, shop/skills placeholder, back on esc).
+  - Ngày 60: Part 10 - refine full game_screen (all integrated: entities/managers/states/hud/sounds/items/skills, test complete flow level/wave/boss/clear/upgrade/equip/drop/collect/die, remove test damage, optimize no errors).
 
 #### Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
-### Link grok to day 55.9
-https://grok.com/share/c2hhcmQtMi1jb3B5_52d7ba89-2a22-47f0-835b-70f9a68fe71b
+### Link grok to day 60
+https://grok.com/share/c2hhcmQtMw_6a4a2288-190d-49e7-a4de-c639cdfac41e
 
 #### Ghi chú tạm
-Promt chỉnh sửa các file có: main, game_over, game_screen, player, enemy
+Promt chỉnh sửa các file: Sửa lại nội dung của các file đính kèm (hub.py, safe_zone.py, game_screen.py) đến ngày 60, không thực hiện hướng dẫn ngày 61
 
 ## Kế hoạch dự án 1 (dự kiến)
 - Kế hoạch bao gồm:
