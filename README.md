@@ -158,11 +158,16 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - Ngày 48: Tích hợp skills vào player đầy đủ trong skills.py và player.py (apply skills effects to player combat (e.g., crit_rate on ranged hit damage *2 if random < rate, pierce hit multiple enemies, stun add timer to enemy no move), passive always on (e.g., armor_mult reduce damage in take_damage), test in game).
 - Ngày 49: Tạo file main_menu.py trong modules/screens/ để định nghĩa class MainMenu (menu chính: buttons start game, options (placeholder), quit, use Pygame rect/text for clickable buttons, handle mouse click to transition states).
 - Ngày 49.5: Tạo main_menu.py với buttons (menu state in main.py, click transition to game, options placeholder, quit), và test menu/buttons work in main.py. Bây giờ, tôi sẽ sửa nội dung các file đính kèm (enemy.py, player.py, main.py, game_screen.py, projectile.py, boss.py, skills.py, main_menu.py, item_manager.py, level_manager.py, sound_manager.py) để đảm bảo code nhất quán, remove test code (test equip/upgrade/skills in game_screen), integrate sound_manager triggers on events (attack/hit/explode/click), refine collision/drop/item/skill apply, fix potential errors (init lists before clear, pass sound_manager), and basic options screen placeholder. Không thực hiện bất kỳ thay đổi nào cho Ngày 50 hoặc sau.
+- Ngày 49.9: Sửa toàn bộ các file liên quan
+- Ngày 50: Tích hợp main_menu vào game loop đầy đủ trong main.py (state machine 'menu'/'game'/'options'/'game_over', on esc/die back to menu, options placeholder with back button, quit exit clean).
 
 #### Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
 ### Link grok to day 49.5
 https://grok.com/share/c2hhcmQtMg_5fbfd789-8046-43d5-abe3-051a35b16b60
+
+#### Ghi chú tạm
+Promt chỉnh sửa các file có: main, game_over
 
 ## Kế hoạch dự án 1 (dự kiến)
 - Kế hoạch bao gồm:
@@ -336,9 +341,6 @@ https://grok.com/share/c2hhcmQtMg_5fbfd789-8046-43d5-abe3-051a35b16b60
   - Ngày 196-198: Update README.md đầy đủ, add docs.
   - Ngày 199: Build executable (pyinstaller nếu cần).
   - Ngày 200: Release on GitHub, test final.
-
-#### Ghi chú tạm
-Bỏ main, base-entity, resource khỏi promt chỉnh sửa các file
 
 # Promt để tiếp tục dự án khi bắt đầu một chat mới
 Trả lời bằng tiếng việt. Tôi đã lên ý tưởng gameplay để lập trình game này hãy giúp tôi tạo dự án game này với python 3.8 và pygame, tạo thành nhiều module nhỏ để dễ quản lý và chỉnh sửa, Gameplay như sau: "THE CHICKENING – GAMEPLAY DESIGN
