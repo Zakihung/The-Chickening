@@ -162,14 +162,19 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - Ngày 50: Tích hợp main_menu vào game loop đầy đủ trong main.py (state machine 'menu'/'game'/'options'/'game_over', on esc/die back to menu, options placeholder with back button, quit exit clean).
 - Ngày 51-60: Tạo game_screen.py đầy đủ (tích hợp all entities/managers: player/enemies/boss/projectiles/resources/items/skills/sounds/level progression, update/draw all, handle states inside game like pause/safe_zone placeholder). 
   - Ngày 51: Integrate level_manager fully into game_screen (spawn/update/draw enemies/spawns/obstacles, player.enemies = level.enemies), remove test entities.
+  - Ngày 52: Tiếp tục part 2 - integrate player/projectiles into game_screen (update/draw player/projectiles, collision check in screen or manager, refine projectile spawn from player attacks). Focus clean code, no duplicate update.
+  - Ngày 53: Part 3 - integrate boss/minions into game_screen (boss as enemy in level_manager, minions update/draw from boss, ensure collision/damage with player/proj).
+  - Ngày 54: Part 4 - integrate resources/thoc into game_screen (update/draw resources, collect add collected, die drop/loss, store_thoc on key/test).
+  - Ngày 55: Part 5 - integrate items/equip into game_screen (item_manager in screen, random drop on enemy die add to inventory, equip on key/test, apply effects/synergies).
+  - 
 
 #### Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
-### Link grok to day 49.5
-https://grok.com/share/c2hhcmQtMg_5fbfd789-8046-43d5-abe3-051a35b16b60
+### Link grok to day 55
+https://grok.com/share/c2hhcmQtMi1jb3B5_f3bff72a-d65d-4da9-9ff0-2b82b7ddb2a3
 
 #### Ghi chú tạm
-Promt chỉnh sửa các file có: main, game_over
+Promt chỉnh sửa các file có: main, game_over, game_screen, player, enemy
 
 ## Kế hoạch dự án 1 (dự kiến)
 - Kế hoạch bao gồm:
