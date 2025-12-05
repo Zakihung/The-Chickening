@@ -172,14 +172,16 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Ngày 58: Part 8 - add hud in game_screen (HP/energy/thoc counter text/bar, minimap placeholder rect show enemies/obs).
   - Ngày 59: Part 9 - add pause/safe_zone in game_screen (key P pause (stop update, draw 'Paused'), key S to safe_zone state (store thóc, shop/skills placeholder, back on esc).
   - Ngày 60: Part 10 - refine full game_screen (all integrated: entities/managers/states/hud/sounds/items/skills, test complete flow level/wave/boss/clear/upgrade/equip/drop/collect/die, remove test damage, optimize no errors).
+  - Ngày 60.9: Sửa lỗi các file
+
 
 #### Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
-### Link grok to day 60
-https://grok.com/share/c2hhcmQtMw_6a4a2288-190d-49e7-a4de-c639cdfac41e
+### Link grok to day 60.9
+https://grok.com/share/c2hhcmQtMw_e393a287-5f85-4704-a708-c7241e7cf680
 
 #### Ghi chú tạm
-Promt chỉnh sửa các file: Sửa lại nội dung của các file đính kèm (hub.py, safe_zone.py, game_screen.py) đến ngày 60, không thực hiện hướng dẫn ngày 61
+Promt chỉnh sửa các file: Sửa lại nội dung của các file đính kèm (hud.py, safe_zone.py, game_screen.py) đến ngày 60, không thực hiện hướng dẫn ngày 61
 
 ## Kế hoạch dự án 1 (dự kiến)
 - Kế hoạch bao gồm:
