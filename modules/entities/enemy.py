@@ -4,6 +4,7 @@ import pygame
 import random
 from modules.entities.base_entity import BaseEntity
 from modules.managers import item_manager
+from modules.screens import game_screen
 from modules.utils.constants import (
     ENEMY_HP_BASE, ENEMY_SPEED_BASE, COLOR_RED, DROP_THO_RATE, SCREEN_WIDTH, SCREEN_HEIGHT, BOMB_AOE_RADIUS
 )
@@ -217,8 +218,8 @@ class Enemy(BaseEntity):
                 thoc = Resource(self.rect.centerx, self.rect.centery, random.randint(5, 20))
                 # Add to global resources
             if random.random() < 0.2:
-                item_id = item_manager.get_random_item()
-                # Placeholder equip or add inventory
+                item_id = game_screen.item_manager.get_random_item()  # Pass game_screen? Or global
+                player.inventory.append(item_id)  # Add to inventory
 
     def is_back_hit(self, attacker_pos):
         to_attacker = pygame.Vector2(attacker_pos[0] - self.rect.centerx, attacker_pos[1] - self.rect.centery)
