@@ -53,7 +53,7 @@ class Player(BaseEntity):
         self.armor = 0
         self.burn_damage = 0
         self.equipped_slots = {'weapon': None, 'armor': None, 'accessory': None, 'boots': None}
-        self.inventory = []  # List item_ids not equipped
+        self.inventory = []
         self.base_melee_damage = PLAYER_DAMAGE_DEFAULT
         self.base_speed = PLAYER_SPEED_DEFAULT
         self.unlocked_skills = []
@@ -65,6 +65,7 @@ class Player(BaseEntity):
         self.bomb_stun = 0.0
         self.upgrade_levels = {'melee': 0, 'ranged': 0, 'bomb': 0}
         self.sound_manager = sound_manager
+        self.dodge_chance = 0.0  # For item synergy
 
     def update(self, delta_time, keys):
         super().update(delta_time)
@@ -130,7 +131,7 @@ class Player(BaseEntity):
             if self.direction.length() > 0:
                 self.ranged_cooldown = 0.3
                 self.eggnergy -= self.ranged_cost
-                proj = Projectile(self.rect.centerx, self.rect.centery, self.direction, 'ranged', 15, 10)
+                proj = Projectile(self.rect.centerx, self.rect.centery, self.direction, 'ranged', 15, 10, sound_manager=self.sound_manager)
                 self.projectiles.append(proj)
                 if self.sound_manager:
                     self.sound_manager.play_sfx('cluck', 0.8)
@@ -146,7 +147,7 @@ class Player(BaseEntity):
                 offset = self.direction.normalize() * 50
                 start_x += offset.x
                 start_y += offset.y
-            proj = Projectile(start_x, start_y, self.direction, 'bomb', BOMB_DAMAGE, 5, BOMB_AOE_RADIUS)
+            proj = Projectile(start_x, start_y, self.direction, 'bomb', BOMB_DAMAGE, 5, BOMB_AOE_RADIUS, sound_manager=self.sound_manager)
             self.projectiles.append(proj)
             if self.sound_manager:
                 self.sound_manager.play_sfx('cluck', 0.8)
@@ -170,8 +171,14 @@ class Player(BaseEntity):
         if self.hp <= 0 and self.alive:
             self.alive = False
             self.die()
-            # if self.sound_manager:
-            #     self.sound_manager.play_sfx('auu', 0.8)  # Player die sound
+            if self.sound_manager:
+                self.sound_manager.play_sfx('auu', 0.8)  # Player die sound
+
+    def take_damage(self, damage, attacker_pos=None):
+        if random.random() < self.dodge_chance:
+            return  # Dodge no damage
+        damage /= self.armor_mult  # Reduce by armor mult
+        super().take_damage(damage)
 
     def draw(self, screen):
         if self.image and self.invincible:
@@ -211,4 +218,4 @@ class Player(BaseEntity):
             print(f"Lost {lost} thóc! Dropped {remaining} to collect again.")
         self.hp = self.max_hp
         self.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-        self.alive = True  # Respawn
+        self.alive = True

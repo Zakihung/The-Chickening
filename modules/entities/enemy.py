@@ -4,7 +4,6 @@ import pygame
 import random
 from modules.entities.base_entity import BaseEntity
 from modules.managers import item_manager
-from modules.screens import game_screen
 from modules.utils.constants import (
     ENEMY_HP_BASE, ENEMY_SPEED_BASE, COLOR_RED, DROP_THO_RATE, SCREEN_WIDTH, SCREEN_HEIGHT, BOMB_AOE_RADIUS
 )
@@ -18,7 +17,7 @@ class Enemy(BaseEntity):
         super().__init__(x, y, width, height, hp=ENEMY_HP_BASE, speed=ENEMY_SPEED_BASE)
         self.type = enemy_type
         self.image = None
-        self.sound_manager = sound_manager  # Pass from game_screen
+        self.sound_manager = sound_manager
         self.direction_change_timer = random.uniform(1, 2)
         self.zigzag_amplitude = 50
         self.zigzag_frequency = 5
@@ -131,7 +130,7 @@ class Enemy(BaseEntity):
                 elif self.type == 'shield':
                     if dist > 0:
                         base_dir = pygame.Vector2(dx / dist, dy / dist)
-                        self.direction = -base_dir  # Quay mặt player
+                        self.direction = -base_dir
 
                     if self.shield_turn_duration <= 0 and self.shield_cooldown <= 0:
                         if random.random() < 0.01:
@@ -216,10 +215,10 @@ class Enemy(BaseEntity):
             self.dropped = True
             if random.random() < DROP_THO_RATE:
                 thoc = Resource(self.rect.centerx, self.rect.centery, random.randint(5, 20))
-                # Add to global resources
+                # Add to global resources, e.g., game_screen.resources.append(thoc) if pass game_screen
             if random.random() < 0.2:
-                item_id = game_screen.item_manager.get_random_item()  # Pass game_screen? Or global
-                player.inventory.append(item_id)  # Add to inventory
+                item_id = item_manager.get_random_item()
+                player.inventory.append(item_id)
 
     def is_back_hit(self, attacker_pos):
         to_attacker = pygame.Vector2(attacker_pos[0] - self.rect.centerx, attacker_pos[1] - self.rect.centery)
