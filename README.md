@@ -160,6 +160,8 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - Ngày 49.5: Tạo main_menu.py với buttons (menu state in main.py, click transition to game, options placeholder, quit), và test menu/buttons work in main.py. Bây giờ, tôi sẽ sửa nội dung các file đính kèm (enemy.py, player.py, main.py, game_screen.py, projectile.py, boss.py, skills.py, main_menu.py, item_manager.py, level_manager.py, sound_manager.py) để đảm bảo code nhất quán, remove test code (test equip/upgrade/skills in game_screen), integrate sound_manager triggers on events (attack/hit/explode/click), refine collision/drop/item/skill apply, fix potential errors (init lists before clear, pass sound_manager), and basic options screen placeholder. Không thực hiện bất kỳ thay đổi nào cho Ngày 50 hoặc sau.
 - Ngày 49.9: Sửa toàn bộ các file liên quan
 - Ngày 50: Tích hợp main_menu vào game loop đầy đủ trong main.py (state machine 'menu'/'game'/'options'/'game_over', on esc/die back to menu, options placeholder with back button, quit exit clean).
+- Ngày 51-60: Tạo game_screen.py đầy đủ (tích hợp all entities/managers: player/enemies/boss/projectiles/resources/items/skills/sounds/level progression, update/draw all, handle states inside game like pause/safe_zone placeholder). 
+  - Ngày 51: Integrate level_manager fully into game_screen (spawn/update/draw enemies/spawns/obstacles, player.enemies = level.enemies), remove test entities.
 
 #### Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
