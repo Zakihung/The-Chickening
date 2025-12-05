@@ -21,8 +21,6 @@ def main():
     game_screen = None
     game_over = None
 
-    font = pygame.font.SysFont(None, 40)  # Font for options placeholder
-
     while running:
         delta_time = clock.get_time() / 1000.0
         events = pygame.event.get()
@@ -46,15 +44,15 @@ def main():
                 running = False
             main_menu.draw()
         elif state == 'game':
-            game_screen.update(delta_time, keys)
+            game_screen.update(delta_time, keys, events)  # Sửa: Add events as arg
             game_screen.draw_background()
             if not game_screen.player.alive:
                 state = 'game_over'
                 game_over = GameOver(screen)
         elif state == 'options':
-            # Placeholder options: Esc back, draw title
-            screen.fill(COLOR_BLACK)  # Sửa: screen.fill (no self)
-            title = font.render('Options (Esc to back)', True, COLOR_WHITE)
+            # Placeholder options: Esc back
+            screen.fill(COLOR_BLACK)
+            title = pygame.font.SysFont(None, 40).render('Options (Esc to back)', True, COLOR_WHITE)
             screen.blit(title, (SCREEN_WIDTH//2 - 150, 100))
         elif state == 'game_over':
             action = game_over.update(events)
