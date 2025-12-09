@@ -22,7 +22,7 @@ class Player(BaseEntity):
         )
         try:
             self.image = pygame.image.load('assets/images/player/chicken.png')
-            self.image = pygame.transform.scale(self.image, (100, 100))
+            self.image = pygame.transform.scale(self.image, (300, 300))
             self.rect = self.image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
             self.original_image = self.image
         except pygame.error as e:
@@ -47,7 +47,7 @@ class Player(BaseEntity):
         self.bomb_regen_timer = 0
         self.enemies = []
         self.thoc_collected = 0
-        self.thoc_stored = 0
+        self.thoc_stored = 100000
         self.dropped_resources = []
         self.equipped_items = []
         self.armor = 0

@@ -19,7 +19,7 @@ class Boss(Enemy):
         sprite_path = os.path.join('assets', 'images', 'boss', 'big_fox.png')
         if os.path.exists(sprite_path):
             self.image = pygame.image.load(sprite_path)
-            self.image = pygame.transform.scale(self.image, (100, 100))
+            self.image = pygame.transform.scale(self.image, (300, 300))
         else:
             self.image = None
         self.phase = 1

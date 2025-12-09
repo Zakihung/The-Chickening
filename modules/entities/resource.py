@@ -17,7 +17,7 @@ class Resource(BaseEntity):
         sprite_path = os.path.join('assets', 'images', 'resources', 'thoc.png')
         if os.path.exists(sprite_path):
             self.image = pygame.image.load(sprite_path)
-            self.image = pygame.transform.scale(self.image, (20, 20))
+            self.image = pygame.transform.scale(self.image, (300, 300))
         else:
             self.image = None
         self.alive = True  # Để collect
