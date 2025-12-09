@@ -173,15 +173,27 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Ngày 59: Part 9 - add pause/safe_zone in game_screen (key P pause (stop update, draw 'Paused'), key S to safe_zone state (store thóc, shop/skills placeholder, back on esc).
   - Ngày 60: Part 10 - refine full game_screen (all integrated: entities/managers/states/hud/sounds/items/skills, test complete flow level/wave/boss/clear/upgrade/equip/drop/collect/die, remove test damage, optimize no errors).
   - Ngày 60.9: Sửa lỗi các file
+- Ngày 61-70: Tạo safe_zone.py Với Shop, Skills, Missions
+  - Ngày 61: Part 1 - create safe_zone.py with basic shop (buy items from list with thoc_stored, apply equip), skills upgrade (call skills.upgrade_tree on button, choose from 3 random UI placeholder text), missions board (placeholder tasks reward thoc).
+  - Ngày 62: Part 2 - refine shop in safe_zone (display items list from item_manager, buy button per item if affordable, deduct thoc_stored).
+  - Ngày 63: Part 3 - add skills upgrade UI in safe_zone (button show 3 random from branch, sub-buttons choose 1 apply, cost thoc if need placeholder 100).
+  - Ngày 64: Part 4 - add missions board in safe_zone (list 3 tasks e.g., 'Kill 5 enemies' reward 100 thoc, complete check on level clear or kill, button claim reward add thoc_stored).
+  - Ngày 65: Part 5 - refine shop with rarity/price (price based rarity Common 50, Legendary 500, display color rarity), buy deduct thoc_stored.
+  - Ngày 66: Part 6 - add upgrade chuồng in safe_zone (button upgrade reduce shop price/increase regen HP, cost thoc_stored increasing levels).
+  - Ngày 67: Part 7 - refine skills UI in safe_zone (draw 3 random skills text/effects as buttons, on click apply selected, cost thoc per upgrade).
+  - Ngày 68: Part 8 - refine missions (multiple tasks 'Kill X type' 'Destroy spawns', progress track in player.mission_progress dict, claim reward on complete).
+  - Ngày 69: Part 9 - add draw thoc_stored text in safe_zone, refine shop discount from chuong_level (price = (1 - 0.1level)).
+  - Ngày 70: Part 10 - refine full safe_zone (all integrated shop/buy/equip, skills choose 3 apply, missions claim, upgrade chuong apply buffs, test flow enter S, actions, back esc, optimize no errors).
+
 
 
 #### Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
-### Link grok to day 60.9
-https://grok.com/share/c2hhcmQtMw_e393a287-5f85-4704-a708-c7241e7cf680
+### Link grok to day 70.9
+https://grok.com/share/c2hhcmQtMw_c2ed3c3a-8bd9-4b5b-827c-6d85d5df6229
 
 #### Ghi chú tạm
-Promt chỉnh sửa các file: Sửa lại nội dung của các file đính kèm (hud.py, safe_zone.py, game_screen.py) đến ngày 60, không thực hiện hướng dẫn ngày 61
+Promt chỉnh sửa các file: Sửa lại nội dung của các file đính kèm (safe_zone.py, player.py) đến ngày 60, không thực hiện hướng dẫn ngày 61
 
 ## Kế hoạch dự án 1 (dự kiến)
 - Kế hoạch bao gồm:
