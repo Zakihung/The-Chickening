@@ -20,7 +20,7 @@ class GameOver:
 
     def load_highscores(self):
         try:
-            with open('highscores.json', 'r') as f:
+            with open('highscores.json', 'r', encoding="utf8") as f:
                 return json.load(f).get('highscores', [])
         except (FileNotFoundError, json.JSONDecodeError):
             return []

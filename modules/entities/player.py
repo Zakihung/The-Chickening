@@ -68,8 +68,6 @@ class Player(BaseEntity):
         self.dodge_chance = 0.0
         self.chuong_level = 0
         self.regen_hp = 0
-        self.shop_discount = 0.0
-        self.mission_progress = {'kill_runner': 0, 'destroy_spawn': 0, 'collect_thoc': 0}
 
     def update(self, delta_time, keys):
         super().update(delta_time)
@@ -172,9 +170,7 @@ class Player(BaseEntity):
 
         self.eggnergy = min(self.eggnergy + 10 * delta_time, EGGNERGY_MAX)
 
-        # Regen HP in safe_zone (placeholder if self.safe_zone, but since no, on key R test)
-        if keys[pygame.K_r]:
-            self.hp = min(self.hp + self.regen_hp * delta_time, self.max_hp)
+        self.hp = min(self.hp + self.regen_hp * delta_time, self.max_hp)
 
         if self.hp <= 0 and self.alive:
             self.alive = False

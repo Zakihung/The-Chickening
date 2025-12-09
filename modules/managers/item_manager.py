@@ -7,7 +7,6 @@ class ItemManager:
     def __init__(self):
         with open(DATA_PATH + 'items.json', 'r', encoding="utf8") as f:
             self.items_data = json.load(f)['items']
-        self.synergies = {}
 
     def get_item_by_id(self, item_id):
         return next((item for item in self.items_data if item['id'] == item_id), None)
@@ -47,7 +46,7 @@ class ItemManager:
         if 'speed_penalty' in effects:
             player.speed += mult * effects['speed_penalty']
         if 'dodge_chance' in effects:
-            player.dodge_chance += mult * effects['dodge_chance']  # Add player.dodge_chance = 0
+            player.dodge_chance += mult * effects['dodge_chance']
 
     def remove_synergies(self, player):
         player.burn_damage = 0

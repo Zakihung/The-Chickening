@@ -2,6 +2,7 @@
 import math
 import pygame
 import random
+import os
 from modules.entities.enemy import Enemy
 from modules.utils.constants import (
     SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_RED, ENEMY_HP_BASE
@@ -15,6 +16,12 @@ class Boss(Enemy):
         self.max_hp = self.hp
         self.speed = 3
         self.rect.inflate_ip(50, 50)
+        sprite_path = os.path.join('assets', 'images', 'boss', 'big_fox.png')
+        if os.path.exists(sprite_path):
+            self.image = pygame.image.load(sprite_path)
+            self.image = pygame.transform.scale(self.image, (100, 100))
+        else:
+            self.image = None
         self.phase = 1
         self.phase_thresholds = [0.5, 0.2]
         self.minions = []
@@ -50,24 +57,24 @@ class Boss(Enemy):
 
                 if self.phase == 1:
                     self.dash_duration = 1.0
-                    spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage, self.spear_speed, length=self.spear_length, sound_manager=self.sound_manager)
+                    spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage, self.spear_speed, length=self.spear_length)
                     self.projectiles.append(spear)
                     self.attack_cooldown = self.charge_cooldown_base
                     if self.sound_manager:
-                        self.sound_manager.play_sfx('cluck', 0.8)  # Placeholder charge sound
+                        self.sound_manager.play_sfx('cluck', 0.8)
 
                 elif self.phase == 2:
                     self.dash_duration = 1.5
                     for i in [-0.1, 0.1]:
                         offset_dir = base_dir.rotate(i * 30)
-                        spear = Projectile(self.rect.centerx, self.rect.centery, offset_dir, 'ranged', self.spear_damage, self.spear_speed, length=self.spear_length, sound_manager=self.sound_manager)
+                        spear = Projectile(self.rect.centerx, self.rect.centery, offset_dir, 'ranged', self.spear_damage, self.spear_speed, length=self.spear_length)
                         self.projectiles.append(spear)
                     self.attack_cooldown = self.charge_cooldown_base * 0.7
 
                 elif self.phase == 3:
                     self.dash_duration = 2.0
                     self.spear_damage *= self.rage_mult
-                    spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage, self.spear_speed * self.rage_mult, length=self.spear_length * 1.5, sound_manager=self.sound_manager)
+                    spear = Projectile(self.rect.centerx, self.rect.centery, base_dir, 'ranged', self.spear_damage, self.spear_speed * self.rage_mult, length=self.spear_length * 1.5)
                     self.projectiles.append(spear)
                     self.summon_minions(2)
                     self.attack_cooldown = self.charge_cooldown_base * 0.5
@@ -98,6 +105,10 @@ class Boss(Enemy):
             minion_y = self.rect.y + random.randint(-50, 50)
             minion = Enemy(minion_x, minion_y, 'runner', self.sound_manager)
             minion.hp /= 2
+            sprite_path = os.path.join('assets', 'images', 'minions', 'small_fox.png')
+            if os.path.exists(sprite_path):
+                minion.image = pygame.image.load(sprite_path)
+                minion.image = pygame.transform.scale(minion.image, (30, 30))
             self.minions.append(minion)
 
     def draw(self, screen):

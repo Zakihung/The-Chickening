@@ -14,7 +14,7 @@ class LevelManager:
     def __init__(self, sound_manager=None):
         with open('data/levels.json', 'r', encoding="utf8") as f:
             self.levels_data = json.load(f)['levels']
-        self.current_level = 0
+        self.current_level = 0  # Bắt đầu level 1 (index 0)
         self.current_wave = 0
         self.enemies = []
         self.spawn_points = []
@@ -24,6 +24,7 @@ class LevelManager:
         self.is_boss_level = False
         self.background_image = None
         self.sound_manager = sound_manager
+        self.waves = []  # Thêm dòng này để khởi tạo waves
         self.load_level(self.current_level)
 
     def load_level(self, level_id):
@@ -50,7 +51,7 @@ class LevelManager:
                     self.obstacles.append(obs)
             # Add more for other types
 
-            self.waves = level['waves'] if not self.is_boss_level else []
+            self.waves = level['waves'] if not self.is_boss_level else []  # No waves if boss
             self.spawn_points = [BaseEntity(sp['x'], sp['y'], 40, 40, hp=sp['hp']) for sp in level['spawn_points']]
             self.boss_data = level['boss']
             self.current_wave = 0
@@ -58,6 +59,9 @@ class LevelManager:
             if self.is_boss_level and self.boss_data:
                 boss = Boss(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2, self.boss_data['type'], self.sound_manager)
                 self.enemies.append(boss)
+        else:
+            self.waves = []  # Default if no level
+            print("No level data, default empty waves")
 
     def next_level(self):
         self.current_level += 1
@@ -71,28 +75,6 @@ class LevelManager:
             print("All levels cleared!")
 
     def update(self, delta_time, player):
-        for obs in self.obstacles[:]:
-            if player.melee_hitbox and rect_collision(obs.rect, player.melee_hitbox):
-                obs.take_damage(player.melee_damage)
-            for proj in player.projectiles:
-                if rect_collision(obs.rect, proj.rect):
-                    obs.take_damage(proj.damage)
-                    if proj.type != 'bomb':
-                        proj.alive = False
-                if proj.type == 'bomb' and proj.exploded:
-                    dist = math.hypot(obs.rect.centerx - proj.rect.centerx, obs.rect.centery - proj.rect.centery)
-                    if dist <= proj.aoe_radius:
-                        obs.take_damage(proj.damage)
-            if obs.hp <= 0:
-                self.obstacles.remove(obs)
-
-        for obs in self.obstacles:
-            if rect_collision(player.rect, obs.rect):
-                player.rect.move_ip(-player.direction.x * player.speed, -player.direction.y * player.speed)
-            for enemy in self.enemies:
-                if rect_collision(enemy.rect, obs.rect):
-                    enemy.rect.move_ip(-enemy.direction.x * enemy.speed, -enemy.direction.y * enemy.speed)
-
         self.wave_timer -= delta_time
         if self.wave_timer <= 0 and self.current_wave < len(self.waves) and self.spawn_points:
             wave = self.waves[self.current_wave]
@@ -134,8 +116,6 @@ class LevelManager:
     def draw(self, screen):
         if self.background_image:
             screen.blit(self.background_image, (0, 0))
-        for obs in self.obstacles:
-            obs.draw(screen)
         for spawn in self.spawn_points:
             spawn.draw(screen)
         for enemy in self.enemies:

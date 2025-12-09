@@ -2,8 +2,10 @@
 import math
 import pygame
 import random
+import os
 from modules.entities.base_entity import BaseEntity
 from modules.managers import item_manager
+from modules.screens import game_screen
 from modules.utils.constants import (
     ENEMY_HP_BASE, ENEMY_SPEED_BASE, COLOR_RED, DROP_THO_RATE, SCREEN_WIDTH, SCREEN_HEIGHT, BOMB_AOE_RADIUS
 )
@@ -13,11 +15,24 @@ from modules.entities.resource import Resource
 
 class Enemy(BaseEntity):
     def __init__(self, x, y, enemy_type='runner', sound_manager=None):
+        """
+        Class base cho kẻ thù: Cáo đỏ.
+        :param x, y: Vị trí spawn
+        :param enemy_type: 'runner', 'archer', etc. để override behavior sau
+        """
         width, height = 50, 50  # Kích thước placeholder
         super().__init__(x, y, width, height, hp=ENEMY_HP_BASE, speed=ENEMY_SPEED_BASE)
         self.type = enemy_type
-        self.image = None
         self.sound_manager = sound_manager
+        # Load sprite based on type
+        sprite_path = os.path.join('assets', 'images', 'enemies', f'fox_{self.type}.png')
+        if os.path.exists(sprite_path):
+            self.image = pygame.image.load(sprite_path)
+            self.image = pygame.transform.scale(self.image, (50, 50))
+        else:
+            self.image = None
+
+        # AI attributes
         self.direction_change_timer = random.uniform(1, 2)
         self.zigzag_amplitude = 50
         self.zigzag_frequency = 5
@@ -57,6 +72,10 @@ class Enemy(BaseEntity):
         self.stun_timer = 0
 
     def update(self, delta_time, player=None):
+        """
+        Override update: AI simple - di chuyển ngẫu nhiên, or zig-zag áp sát nếu 'runner'.
+        :param player: Player instance để target
+        """
         super().update(delta_time)
 
         if self.stun_timer > 0:
@@ -215,7 +234,7 @@ class Enemy(BaseEntity):
             self.dropped = True
             if random.random() < DROP_THO_RATE:
                 thoc = Resource(self.rect.centerx, self.rect.centery, random.randint(5, 20))
-                # Add to global resources, e.g., game_screen.resources.append(thoc) if pass game_screen
+                game_screen.resources.append(thoc)  # Add to global if pass game_screen, placeholder
             if random.random() < 0.2:
                 item_id = item_manager.get_random_item()
                 player.inventory.append(item_id)

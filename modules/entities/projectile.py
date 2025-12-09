@@ -32,8 +32,8 @@ class Projectile(BaseEntity):
             if self.explode_timer <= 0 and not self.exploded:
                 self.exploded = True
                 self.alive = False
-                # if self.sound_manager:
-                #     self.sound_manager.play_sfx('explosion')
+                if self.sound_manager:
+                    self.sound_manager.play_sfx('explosion')
 
         if not (0 < self.rect.centerx < SCREEN_WIDTH and 0 < self.rect.centery < SCREEN_HEIGHT):
             self.alive = False
