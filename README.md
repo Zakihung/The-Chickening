@@ -217,8 +217,11 @@ https://grok.com/share/c2hhcmQtMw_30572994-aa8b-41fa-8614-4417bfa96c97
 ### Link grok to day 90.9
 https://grok.com/share/c2hhcmQtMw_ffa0f216-2129-478a-b9a5-b7f6bda39dfa
 
+### Link gork to day 90.91 immortal chicken
+https://grok.com/share/c2hhcmQtMw_26805aff-b305-451e-8180-4eaeefccf4e2
+
 #### Ghi chú tạm
-Sửa lại nội dung của các file đính kèm (game_over.py, main.py, options.py, highscores.json, game_screen.py, player.py) đến ngày 80, không thực hiện hướng dẫn ngày 81
+Sửa lại nội dung của các file đính kèm (enemy.py, projectile.py, player.py, resource.py, item_manager.py, level_manager.py, boss.py) đến ngày 90, không thực hiện hướng dẫn ngày 91
 
 ## Kế hoạch dự án 1 (dự kiến)
 - Kế hoạch bao gồm:
