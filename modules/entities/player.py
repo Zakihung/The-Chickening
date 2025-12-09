@@ -65,7 +65,11 @@ class Player(BaseEntity):
         self.bomb_stun = 0.0
         self.upgrade_levels = {'melee': 0, 'ranged': 0, 'bomb': 0}
         self.sound_manager = sound_manager
-        self.dodge_chance = 0.0  # For item synergy
+        self.dodge_chance = 0.0
+        self.chuong_level = 0
+        self.regen_hp = 0
+        self.shop_discount = 0.0  # Updated on upgrade
+        self.mission_progress = {'kill_runner': 0, 'destroy_spawn': 0, 'collect_thoc': 0}
 
     def update(self, delta_time, keys):
         super().update(delta_time)
@@ -131,7 +135,7 @@ class Player(BaseEntity):
             if self.direction.length() > 0:
                 self.ranged_cooldown = 0.3
                 self.eggnergy -= self.ranged_cost
-                proj = Projectile(self.rect.centerx, self.rect.centery, self.direction, 'ranged', 15, 10, sound_manager=self.sound_manager)
+                proj = Projectile(self.rect.centerx, self.rect.centery, self.direction, 'ranged', 15, 10)
                 self.projectiles.append(proj)
                 if self.sound_manager:
                     self.sound_manager.play_sfx('cluck', 0.8)
@@ -147,7 +151,7 @@ class Player(BaseEntity):
                 offset = self.direction.normalize() * 50
                 start_x += offset.x
                 start_y += offset.y
-            proj = Projectile(start_x, start_y, self.direction, 'bomb', BOMB_DAMAGE, 5, BOMB_AOE_RADIUS, sound_manager=self.sound_manager)
+            proj = Projectile(start_x, start_y, self.direction, 'bomb', BOMB_DAMAGE, 5, BOMB_AOE_RADIUS)
             self.projectiles.append(proj)
             if self.sound_manager:
                 self.sound_manager.play_sfx('cluck', 0.8)
@@ -172,12 +176,12 @@ class Player(BaseEntity):
             self.alive = False
             self.die()
             if self.sound_manager:
-                self.sound_manager.play_sfx('auu', 0.8)  # Player die sound
+                self.sound_manager.play_sfx('auu', 0.8)
 
     def take_damage(self, damage, attacker_pos=None):
         if random.random() < self.dodge_chance:
-            return  # Dodge no damage
-        damage /= self.armor_mult  # Reduce by armor mult
+            return
+        damage /= self.armor_mult
         super().take_damage(damage)
 
     def draw(self, screen):
