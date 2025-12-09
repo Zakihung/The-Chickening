@@ -12,6 +12,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - ├── main.py                  `# File chính chạy game, khởi tạo Pygame và loop`
 - ├── requirements.txt         `# Danh sách dependencies (pygame==2.1.2, etc.)`
 - ├── README.md                `# Tài liệu dự án`
+- ├── highscores.json          `# Lưu highscores`
 - ├── assets/                  `# Tài nguyên tĩnh`
 - │   ├── images/              `# Sprites, backgrounds (e.g., chicken.png, fox.png)`
 - │   │   ├── player/
@@ -40,7 +41,8 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
 - │   │   ├── main_menu.py     `# Menu chính với nút start/options/quit`
 - │   │   ├── game_screen.py   `# Màn chơi chính (arena)`
 - │   │   ├── safe_zone.py     `# Chuồng Gà (shop, skills, missions)`
-- │   │   └── game_over.py     `# Màn thua`
+- │   │   ├── game_over.py     `# Màn thua`
+- │   │   └── options.py       `# Tùy chọn âm thanh, sfx`
 - │   ├── utils/               `# Công cụ hỗ trợ`
 - │   │   ├── constants.py     `# Hằng số (colors, sizes, etc.)`
 - │   │   ├── helpers.py       `# Hàm tiện ích (collision, random)`
@@ -184,16 +186,28 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Ngày 68: Part 8 - refine missions (multiple tasks 'Kill X type' 'Destroy spawns', progress track in player.mission_progress dict, claim reward on complete).
   - Ngày 69: Part 9 - add draw thoc_stored text in safe_zone, refine shop discount from chuong_level (price = (1 - 0.1level)).
   - Ngày 70: Part 10 - refine full safe_zone (all integrated shop/buy/equip, skills choose 3 apply, missions claim, upgrade chuong apply buffs, test flow enter S, actions, back esc, optimize no errors).
-
+- Ngày 71-80: Tạo game_over.py và state transitions.
+  - Ngày 71: Part 1/10 - refine game_over.py with functional buttons (restart new game_screen, quit exit), draw score placeholder.
+  - Ngày 72: Part 2/10 - refine main.py state transitions for die (check player.alive = False to 'game_over').
+  - Ngày 73: Part 3/10 - refine main.py on game_over 'restart' action new GameScreen, back to 'game'.
+  - Ngày 74: Part 4/10 - refine main.py on game_over 'quit' running = False clean exit.
+  - Ngày 75: Part 5/10 - refine main.py esc in 'game' state = 'menu'.
+  - Ngày 76: Part 6/10 - add options state in main.py, placeholder with vol slider for music/sfx (use mouse drag adjust sound_manager vol).
+  - Ngày 77: Part 7/10 - add highscore in game_over.py (load/save json highscores, draw top 5, update on die with score = thoc_stored + levels cleared).
+  - Ngày 78: Part 8/10 - add score calc in game_screen (score = thoc + levels100 + kills10, update on collect/clear/kill, pass to game_over on die).
+  - Ngày 79: Part 9/10 - add fade in/out on state transitions in main.py (use pygame surface alpha fade for smooth change).
+  - Ngày 80: Part 10/10 - refine full state transitions (all states menu/game/options/game_over/safe_zone/pause, test flow start/play/die/restart/options/back/quit/esc, optimize no errors, clean code).
 
 
 #### Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
-### Link grok to day 70.9
-https://grok.com/share/c2hhcmQtMw_c2ed3c3a-8bd9-4b5b-827c-6d85d5df6229
+### Link grok to day 80
+https://grok.com/share/c2hhcmQtMw_6f725353-1de5-4cd3-804d-766fdd642c84
+### Link grok to day 80.9
+https://grok.com/share/c2hhcmQtMw_59b2464a-d5de-4ed0-8f27-a33799422720
 
 #### Ghi chú tạm
-Promt chỉnh sửa các file: Sửa lại nội dung của các file đính kèm (safe_zone.py, player.py) đến ngày 60, không thực hiện hướng dẫn ngày 61
+Sửa lại nội dung của các file đính kèm (game_over.py, main.py, options.py, highscores.json, game_screen.py, player.py) đến ngày 80, không thực hiện hướng dẫn ngày 81
 
 ## Kế hoạch dự án 1 (dự kiến)
 - Kế hoạch bao gồm:
