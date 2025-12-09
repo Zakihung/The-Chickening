@@ -197,14 +197,25 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Ngày 78: Part 8/10 - add score calc in game_screen (score = thoc + levels100 + kills10, update on collect/clear/kill, pass to game_over on die).
   - Ngày 79: Part 9/10 - add fade in/out on state transitions in main.py (use pygame surface alpha fade for smooth change).
   - Ngày 80: Part 10/10 - refine full state transitions (all states menu/game/options/game_over/safe_zone/pause, test flow start/play/die/restart/options/back/quit/esc, optimize no errors, clean code).
-
+- Ngày 81-90: Add Pixel Art Assets
+  - Ngày 81: Part 1 - add pixel art for player (chicken.png in assets/images/player/, load/scale in player.py init, draw blit if image).
+  - Ngày 82: Part 2 - add sprites for enemies types (fox_runner.png, archer.png etc. in assets/images/enemies/, load in enemy.py init based type).
+  - Ngày 83: Part 3 - add sprites for projectiles (feather.png ranged, egg.png bomb, spear.png boss, load in projectile.py init based type).
+  - Ngày 84: Part 4 - add sprite for thóc (thoc.png in assets/images/resources/, load in resource.py init).
+  - Ngày 85: Part 5 - add icons for items (mo_thep.png etc. in assets/images/items/, load in item_manager but UI draw later in safe_zone shop).
+  - Ngày 86: Part 6 - add bg images (farm_bg.png, forest_bg.png etc. in assets/images/backgrounds/, load in level_manager load_level).
+  - Ngày 87: Part 7 - add sprites for obstacles (tree.png, bush.png in assets/images/obstacles/, load in level_manager load_level based map_type random).
+  - Ngày 88: Part 8 - add sprite for spawns (spawn_point.png in assets/images/spawns/, load in level_manager spawn_points BaseEntity image).
+  - Ngày 89: Part 9 - add sprite for boss (big_fox.png in assets/images/boss/, load in boss.py init scale 100x100).
+  - Ngày 90: Part 10 - add sprite for minions (small_fox.png in assets/images/minions/, load in boss.summon_minions Enemy init scale 30x30), full test all assets load/draw no errors, optimize.
 
 #### Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
-### Link grok to day 80
-https://grok.com/share/c2hhcmQtMw_6f725353-1de5-4cd3-804d-766fdd642c84
-### Link grok to day 80.9
-https://grok.com/share/c2hhcmQtMw_59b2464a-d5de-4ed0-8f27-a33799422720
+### Link grok to day 90.5
+https://grok.com/share/c2hhcmQtMw_30572994-aa8b-41fa-8614-4417bfa96c97
+
+### Link grok to day 90.9
+https://grok.com/share/c2hhcmQtMw_ffa0f216-2129-478a-b9a5-b7f6bda39dfa
 
 #### Ghi chú tạm
 Sửa lại nội dung của các file đính kèm (game_over.py, main.py, options.py, highscores.json, game_screen.py, player.py) đến ngày 80, không thực hiện hướng dẫn ngày 81
