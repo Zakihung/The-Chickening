@@ -30,7 +30,7 @@ class Player(BaseEntity):
             self.image = None
 
         self.eggnergy = EGGNERGY_MAX
-        self.invincible = False
+        self.invincible = True  # Bất tử
         self.dodge_speed_multiplier = 2
         self.dodge_duration = 0
         self.dodge_cooldown_timer = 0
@@ -99,7 +99,7 @@ class Player(BaseEntity):
         if self.dodge_duration > 0:
             self.dodge_duration -= delta_time
             if self.dodge_duration <= 0:
-                self.invincible = False
+                self.invincible = True  # Giữ bất tử
                 self.speed /= self.dodge_speed_multiplier
         if self.dodge_cooldown_timer > 0:
             self.dodge_cooldown_timer -= delta_time
@@ -172,17 +172,19 @@ class Player(BaseEntity):
 
         self.hp = min(self.hp + self.regen_hp * delta_time, self.max_hp)
 
-        if self.hp <= 0 and self.alive:
-            self.alive = False
-            self.die()
-            if self.sound_manager:
-                self.sound_manager.play_sfx('auu', 0.8)
+        # Bất tử: Không check hp <=0 die
+        # if self.hp <= 0 and self.alive:
+        #     self.alive = False
+        #     self.die()
+        #     if self.sound_manager:
+        #         self.sound_manager.play_sfx('auu', 0.8)
 
     def take_damage(self, damage, attacker_pos=None):
         if random.random() < self.dodge_chance:
             return
         damage /= self.armor_mult
-        super().take_damage(damage)
+        # Bất tử: Không giảm hp
+        # super().take_damage(damage)
 
     def draw(self, screen):
         if self.image and self.invincible:
@@ -210,16 +212,5 @@ class Player(BaseEntity):
         self.thoc_collected = 0
 
     def die(self):
-        if self.thoc_collected > 0:
-            lost = int(self.thoc_collected * THOC_LOSS_ON_DEATH)
-            remaining = self.thoc_collected - lost
-            self.thoc_collected = 0
-            for _ in range(remaining // 5):
-                drop_x = self.rect.centerx + random.randint(-50, 50)
-                drop_y = self.rect.centery + random.randint(-50, 50)
-                drop = Resource(drop_x, drop_y, 5)
-                self.dropped_resources.append(drop)
-            print(f"Lost {lost} thóc! Dropped {remaining} to collect again.")
-        self.hp = self.max_hp
-        self.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-        self.alive = True
+        # Bất tử: Không die full, placeholder
+        pass
