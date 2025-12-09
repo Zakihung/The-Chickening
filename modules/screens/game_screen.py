@@ -20,24 +20,26 @@ class GameScreen:
         self.hud = Hud(self.screen, self.player, self.level_manager.enemies)
         self.paused = False
         self.safe_zone = None
-        self.font = pygame.font.SysFont(None, 50)  # For paused text
+        self.font = pygame.font.SysFont(None, 50)
+        self.score = 0  # Score calc
+        self.kills = 0  # For score/kills
 
     def update(self, delta_time, keys, events):
         """Update with events for safe_zone."""
-        if keys[pygame.K_p]:  # Toggle pause
+        if keys[pygame.K_p]:
             self.paused = not self.paused
 
         if self.paused:
-            return  # No update if paused
+            return
 
         if keys[pygame.K_s] and not self.safe_zone:
-            self.safe_zone = SafeZone(self.screen, self.player)
+            self.safe_zone = SafeZone(self.screen, self.player, self.item_manager, self.skills)  # Pass item/skills if need
 
         if self.safe_zone:
             action = self.safe_zone.update(events)
             if action == 'back' or keys[pygame.K_ESCAPE]:
                 self.safe_zone = None
-            return  # No other update in safe_zone
+            return
 
         self.player.update(delta_time, keys)
         self.level_manager.update(delta_time, self.player)
@@ -49,10 +51,12 @@ class GameScreen:
         self.resources.extend(self.player.dropped_resources)
         self.player.dropped_resources.clear()
 
-        # Equip from inventory on key E
         if keys[pygame.K_e] and self.player.inventory:
-            item_id = self.player.inventory.pop(0)  # Equip first
+            item_id = self.player.inventory.pop(0)
             self.item_manager.equip_item(self.player, item_id)
+
+        # Score update placeholder (on kill/collect/clear)
+        self.score = self.player.thoc_collected + self.player.thoc_stored + (self.level_manager.current_level * 100) + (self.kills * 10)
 
     def draw_background(self):
         self.screen.fill(self.background_color)
@@ -61,7 +65,7 @@ class GameScreen:
         for res in self.resources:
             res.draw(self.screen)
         self.hud.draw()
-        pygame.draw.rect(self.screen, (0, 100, 0), (0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100))  # Grass placeholder
+        pygame.draw.rect(self.screen, (0, 100, 0), (0, SCREEN_HEIGHT - 100, SCREEN_WIDTH, 100))
 
         if self.paused:
             paused_text = self.font.render('Paused', True, COLOR_WHITE)
