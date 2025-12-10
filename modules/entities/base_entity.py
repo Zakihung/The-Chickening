@@ -4,7 +4,7 @@ from modules.utils.constants import PLAYER_HP_DEFAULT, ENEMY_HP_BASE, COLOR_RED,
 from modules.utils.helpers import rect_collision  # Để dùng sau cho collision
 
 class BaseEntity:
-    def __init__(self, x, y, width, height, hp=None, speed=0):
+    def __init__(self, x, y, width, height, hp=None, speed=0, game_screen=None):
         """
         Class base cho tất cả entities.
         :param x: Vị trí x ban đầu
@@ -21,25 +21,24 @@ class BaseEntity:
         self.alive = True  # Flag để check chết chưa
         self.image = None  # Placeholder cho sprite (load sau)
         self.direction = pygame.Vector2(0, 0)  # Vector hướng di chuyển (normalize sau)
+        self.game_screen = game_screen  # Pass to add popup
 
     def update(self, delta_time):
         """
         Update logic mỗi frame (di chuyển, check chết, etc.).
         Override trong subclass cho AI hoặc input.
-        :param delta_time: Thời gian giữa frames (cho movement mượt, ví dụ: 1/FPS)
+        :param delta_time: Thời gian giữa frames (cho movement independent FPS)
         """
+        # Di chuyển theo direction * speed * delta_time (frame independent)
+        self.rect.x += self.direction.x * self.speed * delta_time
+        self.rect.y += self.direction.y * self.speed * delta_time
+
+        # Giới hạn trong màn hình (placeholder, tùy entity)
+        self.rect.clamp_ip(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+
+        # Check chết
         if self.hp <= 0:
             self.alive = False
-            return  # Không update nếu chết
-
-        # Di chuyển cơ bản dựa trên direction và speed
-        if self.direction.length() > 0:
-            self.direction.normalize_ip()  # Normalize để tốc độ ổn định
-            self.rect.x += self.direction.x * self.speed * delta_time * 60  # Scale với FPS 60
-            self.rect.y += self.direction.y * self.speed * delta_time * 60
-
-        # Giới hạn trong màn hình (placeholder, có thể override)
-        self.rect.clamp_ip(pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
 
     def draw(self, screen):
         """
@@ -71,6 +70,9 @@ class BaseEntity:
         self.hp -= damage
         if self.hp < 0:
             self.hp = 0
+        # Damage popup
+        if self.game_screen:
+            self.game_screen.popups.append({'text': str(int(damage)), 'pos': self.rect.center, 'timer': 1.0, 'color': COLOR_RED})
 
     def is_colliding_with(self, other_entity):
         """
