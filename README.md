@@ -186,6 +186,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Ngày 68: Part 8 - refine missions (multiple tasks 'Kill X type' 'Destroy spawns', progress track in player.mission_progress dict, claim reward on complete).
   - Ngày 69: Part 9 - add draw thoc_stored text in safe_zone, refine shop discount from chuong_level (price = (1 - 0.1level)).
   - Ngày 70: Part 10 - refine full safe_zone (all integrated shop/buy/equip, skills choose 3 apply, missions claim, upgrade chuong apply buffs, test flow enter S, actions, back esc, optimize no errors).
+  - Ngày 70.9: Sửa lỗi và update các file cần thiết
 - Ngày 71-80: Tạo game_over.py và state transitions.
   - Ngày 71: Part 1/10 - refine game_over.py with functional buttons (restart new game_screen, quit exit), draw score placeholder.
   - Ngày 72: Part 2/10 - refine main.py state transitions for die (check player.alive = False to 'game_over').
@@ -197,6 +198,7 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Ngày 78: Part 8/10 - add score calc in game_screen (score = thoc + levels100 + kills10, update on collect/clear/kill, pass to game_over on die).
   - Ngày 79: Part 9/10 - add fade in/out on state transitions in main.py (use pygame surface alpha fade for smooth change).
   - Ngày 80: Part 10/10 - refine full state transitions (all states menu/game/options/game_over/safe_zone/pause, test flow start/play/die/restart/options/back/quit/esc, optimize no errors, clean code).
+  - Ngày 80.9: Update các file cần thiết
 - Ngày 81-90: Add Pixel Art Assets
   - Ngày 81: Part 1 - add pixel art for player (chicken.png in assets/images/player/, load/scale in player.py init, draw blit if image).
   - Ngày 82: Part 2 - add sprites for enemies types (fox_runner.png, archer.png etc. in assets/images/enemies/, load in enemy.py init based type).
@@ -208,20 +210,43 @@ Một game roguelite action với nhân vật gà con chiến đấu chống đ�
   - Ngày 88: Part 8 - add sprite for spawns (spawn_point.png in assets/images/spawns/, load in level_manager spawn_points BaseEntity image).
   - Ngày 89: Part 9 - add sprite for boss (big_fox.png in assets/images/boss/, load in boss.py init scale 100x100).
   - Ngày 90: Part 10 - add sprite for minions (small_fox.png in assets/images/minions/, load in boss.summon_minions Enemy init scale 30x30), full test all assets load/draw no errors, optimize.
+  - Ngày 90.5: Update nội dung các file
+  - Ngày 90.9: Fix lỗi các file cần thiết
+  - Ngày 90.91: Thay đổi hình ảnh, UI cần thiết
+- Ngày 91-100: Refine HUD with all elements/popups
+  - Ngày 91: Part 1 - refine hud.py with HP/energy bar full (draw in hud.draw, use player.hp/max_hp for ratio, add text HP value).
+  - Ngày 92: Part 2 - add thóc counter in hud (draw thoc_text collected/stored, update real-time).
+  - Ngày 93: Part 3 - refine minimap in hud (draw dots for player green center, enemies red rel pos scale, spawns yellow, obs gray).
+  - Ngày 94: Part 4 - add score display in hud (draw score_text = f"Score: {self.player.score}" top right).
+  - Ngày 95: Part 5 - add inventory UI in hud (icon items equipped/inventory, hover tooltip effects, click equip/unequip).
+  - Ngày 96: Part 6 - add skills UI in hud (icon unlocked skills, hover effects/passives).
+  - Ngày 97: Part 7 - add wave/level display in hud (text f"Level: {level_manager.current_level} Wave: {current_wave}/{len(waves)}").
+  - Ngày 98: Part 8 - add FPS display in hud (text f"FPS: {int(1/delta_time)}" top left, pass delta_time to hud draw? Or calculate in hud).
+  - Ngày 99: Part 9 - add damage popups in hud (on take_damage draw floating text damage at pos, fade out).
+  - Ngày 100: Part 10 - refine full hud (all bars/counter/minimap/inventory/skills/wave/score/FPS/popups integrated, test layout no overlap, optimize draw no errors, clean code).
 
 #### Xem `docs/gameplay_design.md` để biết chi tiết gameplay.
 
-### Link grok to day 90.5
-https://grok.com/share/c2hhcmQtMw_30572994-aa8b-41fa-8614-4417bfa96c97
+### Link grok to day 100
+https://grok.com/share/c2hhcmQtMw_8669c56d-7660-438c-a1d7-4cda5195b3ac
 
-### Link grok to day 90.9
-https://grok.com/share/c2hhcmQtMw_ffa0f216-2129-478a-b9a5-b7f6bda39dfa
+### Link grok to day 100.5
+https://grok.com/share/c2hhcmQtMw_7982a5bb-ee0b-4ad0-b499-be1fa57baf7e
+
+### Link grok to day 100.6
+https://grok.com/share/c2hhcmQtMw_69f85619-d84d-44de-86fb-7baeafdbc763
+
+### Link grok to day 100.7
+https://grok.com/share/c2hhcmQtMi1jb3B5_4b130cb4-6b50-4590-9487-9149e7bb9afc
+
+### Link grok to day 100.8
+https://grok.com/share/c2hhcmQtMi1jb3B5_abe397e2-d237-47c0-945d-e50a6f7d42fa
 
 ### Link gork to day 90.91 immortal chicken
 https://grok.com/share/c2hhcmQtMw_26805aff-b305-451e-8180-4eaeefccf4e2
 
 #### Ghi chú tạm
-Sửa lại nội dung của các file đính kèm (enemy.py, projectile.py, player.py, resource.py, item_manager.py, level_manager.py, boss.py) đến ngày 90, không thực hiện hướng dẫn ngày 91
+Sửa lại nội dung của các file đính kèm (hud.py, level_manager.py, main.py, base_entity.py) đến ngày 100, không thực hiện hướng dẫn ngày 101
 
 ## Kế hoạch dự án 1 (dự kiến)
 - Kế hoạch bao gồm:
