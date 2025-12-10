@@ -26,7 +26,8 @@ class GameScreen:
 
         # HUD và các danh sách
         self.resources = []
-        self.hud = Hud(self.screen, self.player, self.level_manager.enemies)
+        self.popups = []  # Thêm dòng này để khởi tạo popups
+        self.hud = Hud(self.screen, self.player, self.level_manager.enemies, self.level_manager, self)
 
         # Trạng thái game
         self.paused = False
@@ -43,26 +44,18 @@ class GameScreen:
         if self.paused:
             return
 
-        # Vào safe zone bằng phím S
         if keys[pygame.K_s] and not self.safe_zone:
-            self.safe_zone = SafeZone(
-                self.screen,
-                self.player,
-                self.item_manager,
-                self.skills  # Bây giờ self.skills đã tồn tại
-            )
+            self.safe_zone = SafeZone(self.screen, self.player, self.item_manager, self.skills)  # Pass item/skills if need
 
         if self.safe_zone:
             action = self.safe_zone.update(events)
             if action == 'back' or keys[pygame.K_ESCAPE]:
                 self.safe_zone = None
-            return  # Không update game khi ở safe zone
+            return
 
-        # Update game bình thường
         self.player.update(delta_time, keys)
         self.level_manager.update(delta_time, self.player)
 
-        # Resources
         for res in self.resources[:]:
             res.update(delta_time, self.player)
             if not res.alive:
@@ -70,7 +63,6 @@ class GameScreen:
         self.resources.extend(self.player.dropped_resources)
         self.player.dropped_resources.clear()
 
-        # Equip item từ inventory bằng phím E
         if keys[pygame.K_e] and self.player.inventory:
             item_id = self.player.inventory.pop(0)
             self.item_manager.equip_item(self.player, item_id)
@@ -82,6 +74,9 @@ class GameScreen:
                 (self.level_manager.current_level * 100) +
                 (self.kills * 10)
         )
+
+        # Update HUD with delta_time for popups/FPS
+        self.hud.update(delta_time)
 
     def draw_background(self):
         # Dùng background từ level_manager (đã có bg + obstacles + spawns)

@@ -44,15 +44,23 @@ class LevelManager:
             if self.map_type == 'farm':
                 for _ in range(5):
                     obs = BaseEntity(random.randint(0, SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 50, 50, hp=20)
+                    obs.image = pygame.image.load(os.path.join(IMAGES_PATH, 'obstacles', 'tree.png'))
+                    obs.image = pygame.transform.scale(obs.image, (50, 50))
                     self.obstacles.append(obs)
             elif self.map_type == 'forest':
                 for _ in range(10):
                     obs = BaseEntity(random.randint(0, SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT), 30, 30, hp=10)
+                    obs.image = pygame.image.load(os.path.join(IMAGES_PATH, 'obstacles', 'bush.png'))
+                    obs.image = pygame.transform.scale(obs.image, (30, 30))
                     self.obstacles.append(obs)
             # Add more for other types
 
             self.waves = level['waves'] if not self.is_boss_level else []  # No waves if boss
             self.spawn_points = [BaseEntity(sp['x'], sp['y'], 40, 40, hp=sp['hp']) for sp in level['spawn_points']]
+            for spawn in self.spawn_points:
+                spawn.image = pygame.image.load(os.path.join(IMAGES_PATH, 'spawns', 'spawn_point.png'))
+                spawn.image = pygame.transform.scale(spawn.image, (40, 40))
+
             self.boss_data = level['boss']
             self.current_wave = 0
             self.enemies.clear()
@@ -75,6 +83,8 @@ class LevelManager:
             print("All levels cleared!")
 
     def update(self, delta_time, player):
+        """Update waves, spawn enemies, check clear."""
+        # Spawn wave nếu timer hết
         self.wave_timer -= delta_time
         if self.wave_timer <= 0 and self.current_wave < len(self.waves) and self.spawn_points:
             wave = self.waves[self.current_wave]
@@ -84,13 +94,15 @@ class LevelManager:
                     enemy = Enemy(spawn.rect.centerx, spawn.rect.centery, enemy_data['type'], self.sound_manager)
                     self.enemies.append(enemy)
             self.current_wave += 1
-            self.wave_timer = 5.0
+            self.wave_timer = 5.0  # Delay giữa waves (adjust)
 
+        # Update enemies
         for enemy in self.enemies[:]:
             enemy.update(delta_time, player)
             if not enemy.alive:
                 self.enemies.remove(enemy)
 
+        # Update spawn_points (collision với player attacks)
         for spawn in self.spawn_points[:]:
             if player.melee_hitbox and rect_collision(spawn.rect, player.melee_hitbox):
                 spawn.take_damage(player.melee_damage)
@@ -116,6 +128,8 @@ class LevelManager:
     def draw(self, screen):
         if self.background_image:
             screen.blit(self.background_image, (0, 0))
+        for obs in self.obstacles:
+            obs.draw(screen)
         for spawn in self.spawn_points:
             spawn.draw(screen)
         for enemy in self.enemies:
