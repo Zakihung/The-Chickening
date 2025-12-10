@@ -22,7 +22,7 @@ class Player(BaseEntity):
         )
         try:
             self.image = pygame.image.load('assets/images/player/chicken.png')
-            self.image = pygame.transform.scale(self.image, (300, 300))
+            self.image = pygame.transform.scale(self.image, (152/3, 219/3))
             self.rect = self.image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
             self.original_image = self.image
         except pygame.error as e:

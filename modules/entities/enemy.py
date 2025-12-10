@@ -28,7 +28,15 @@ class Enemy(BaseEntity):
         sprite_path = os.path.join('assets', 'images', 'enemies', f'fox_{self.type}.png')
         if os.path.exists(sprite_path):
             self.image = pygame.image.load(sprite_path)
-            self.image = pygame.transform.scale(self.image, (300, 300))
+            if self.type == 'runner':
+                self.image = pygame.transform.scale(self.image, (149/3, 274/3))
+            elif self.type == 'archer':
+                self.image = pygame.transform.scale(self.image, (173/3, 210/3))
+            elif self.type == 'shield':
+                self.image = pygame.transform.scale(self.image, (164/3, 237/3))
+            elif self.type == 'mage':
+                self.image = pygame.transform.scale(self.image, (180/3, 143/3))
+            else: self.image = pygame.transform.scale(self.image, (163/3, 241/3))
         else:
             self.image = None
 
