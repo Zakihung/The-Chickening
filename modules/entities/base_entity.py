@@ -21,24 +21,27 @@ class BaseEntity:
         self.alive = True  # Flag để check chết chưa
         self.image = None  # Placeholder cho sprite (load sau)
         self.direction = pygame.Vector2(0, 0)  # Vector hướng di chuyển (normalize sau)
-        self.game_screen = game_screen  # Pass to add popup
+        self.game_screen = game_screen
 
     def update(self, delta_time):
         """
         Update logic mỗi frame (di chuyển, check chết, etc.).
         Override trong subclass cho AI hoặc input.
-        :param delta_time: Thời gian giữa frames (cho movement independent FPS)
+        :param delta_time: Thời gian giữa frames (cho movement mượt, ví dụ: 1/FPS)
         """
-        # Di chuyển theo direction * speed * delta_time (frame independent)
-        self.rect.x += self.direction.x * self.speed * delta_time
-        self.rect.y += self.direction.y * self.speed * delta_time
+
+        # Di chuyển cơ bản dựa trên direction và speed
+        if self.direction.length() > 0:
+            self.direction.normalize_ip()  # Normalize để tốc độ ổn định
+            self.rect.x += self.direction.x * self.speed * delta_time * 60  # Scale với FPS 60
+            self.rect.y += self.direction.y * self.speed * delta_time * 60
 
         # Giới hạn trong màn hình (placeholder, tùy entity)
         self.rect.clamp_ip(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-        # Check chết
         if self.hp <= 0:
             self.alive = False
+            return  # Không update nếu chết
 
     def draw(self, screen):
         """
@@ -70,12 +73,13 @@ class BaseEntity:
         self.hp -= damage
         if self.hp < 0:
             self.hp = 0
+
         # Damage popup
         if self.game_screen:
-            self.game_screen.popups.append({'text': str(int(damage)), 'pos': self.rect.center, 'timer': 1.0, 'color': COLOR_RED})
+            self.game_screen.popups.append(
+                {'text': str(int(damage)), 'pos': self.rect.center, 'timer': 1.0, 'color': COLOR_RED})
 
     def is_colliding_with(self, other_entity):
         """
         Check collision với entity khác.
         """
-        return rect_collision(self.rect, other_entity.rect)
